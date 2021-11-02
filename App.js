@@ -5,6 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 
 import WelcomeScreen from './app/screens/WelcomeScreen';
 import Dashboard from './app/screens/Dashboard';
+import Throttle from './app/screens/Throttle';
 
 const Stack = createStackNavigator();
 
@@ -21,6 +22,12 @@ export default function App() {
         <Stack.Screen name="Dashboard" component={Dashboard}
           options={{
             title: 'Dashboard',
+            headerShown: false
+          }}
+        />
+        <Stack.Screen name="Throttle" component={Throttle}
+          options={{
+            title: 'Throttle',
             headerShown: false
           }}
         />
