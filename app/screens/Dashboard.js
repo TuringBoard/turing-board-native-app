@@ -1,17 +1,15 @@
 import React from 'react';
-import { StyleSheet, Dimensions, Text, View, Image, TextInput, Button } from 'react-native';
+import { Dimensions, Image, StyleSheet, View, Text } from 'react-native';
 import Backdrop from './backdrops/Backdrop';
-import Login from './Login';
 
 let phoneWidth = Dimensions.get('window').width;
 
-export default function WelcomeScreen() {
+export default function Dashboard() {
     return (
         <View>
             <Backdrop />
             <View style={styles.container}>
                 <Image source={require('../assets/logov2.png')} style={styles.logo} />
-                <Login />
             </View>
         </View>
     );

@@ -4,7 +4,7 @@
     "slug": "turingboard",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./app/assets/logov2.png",
+    "icon": "./app/assets/logov1.png",
     "splash": {
       "image": "./app/assets/splash.png",
       "resizeMode": "contain",
@@ -17,7 +17,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.sahajamatya.turingboard"
     },
     "android": {
       "adaptiveIcon": {
