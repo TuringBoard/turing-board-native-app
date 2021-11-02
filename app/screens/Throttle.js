@@ -32,32 +32,32 @@ export default function Throttle() {
     const labels = [
         {
             name: '',
-            labelColor: '',
+            labelColor: 'rgba(256,256,256,0)',
             activeBarColor: 'rgba(29, 112, 68, 0.8)'
         },
         {
             name: ' ',
-            labelColor: '',
+            labelColor: 'rgba(256,256,256,0)',
             activeBarColor: 'rgba(117, 173, 111, 0.8)'
         },
         {
             name: '  ',
-            labelColor: '',
+            labelColor: 'rgba(256,256,256,0)',
             activeBarColor: 'rgba(255, 190, 0, 0.8)'
         },
         {
             name: '   ',
-            labelColor: '',
+            labelColor: 'rgba(256,256,256,0)',
             activeBarColor: 'rgba(255, 126, 1, 0.8)'
         },
         {
             name: '    ',
-            labelColor: '',
+            labelColor: 'rgba(256,256,256,0)',
             activeBarColor: 'rgba(227, 7, 29, 0.8)'
         },
         {
             name: '     ',
-            labelColor: '',
+            labelColor: 'rgba(256,256,256,0)',
             activeBarColor: 'rgba(201, 20, 20, 0.8)'
         },
     ]
@@ -91,9 +91,9 @@ export default function Throttle() {
                     <MultiSlider
                         containerStyle={styles.slider}
                         trackStyle={{ height: 150 }}
-                        markerStyle={{ shadowOpacity: 0, height: 150, width: 50, top: 75, borderRadius: 5 }}
+                        markerStyle={{ backgroundColor: 'white', shadowOpacity: 0, height: 150, width: 50, top: 75, borderRadius: 5 }}
                         sliderLength={300}
-                        selectedStyle={{ backgroundColor: 'rgba(256,256,256,0.15)', borderTopLeftRadius: 10, borderBottomLeftRadius: 10 }}
+                        selectedStyle={{ backgroundColor: 'rgba(256,256,256,0.55)', borderTopLeftRadius: 10, borderBottomLeftRadius: 10 }}
                         unselectedStyle={{
                             backgroundColor: 'rgba(256,256,256,0.25)',
                             borderTopRightRadius: 10,

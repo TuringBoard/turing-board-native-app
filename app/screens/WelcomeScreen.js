@@ -4,6 +4,7 @@ import Backdrop from './backdrops/Backdrop';
 import Login from './Login';
 
 let phoneWidth = Dimensions.get('window').width;
+let phoneHeight = Dimensions.get('window').height;
 
 export default function WelcomeScreen() {
     return (
