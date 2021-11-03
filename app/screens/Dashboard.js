@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dimensions, Image, StyleSheet, View, Text, Platform } from 'react-native';
+import { Dimensions, Image, StyleSheet, View, ScrollView, Text, Platform } from 'react-native';
 import CustomButtons from '../components/CustomButtons';
 import Backdrop from './backdrops/Backdrop';
 import { useNavigation } from '@react-navigation/native';
@@ -21,7 +21,7 @@ export default function Dashboard() {
     } else {
         if (Platform.OS === "ios") {
             return (
-                <View>
+                <ScrollView>
                     <Backdrop />
                     <View style={styles.container}>
                         <Image source={require('../assets/logov2.png')} style={styles.logo} />
@@ -51,7 +51,7 @@ export default function Dashboard() {
                             </View>
                         </View>
                     </View>
-                </View>
+                </ScrollView>
             );
         } else if (Platform.OS === "android") {
             return (

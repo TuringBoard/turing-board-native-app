@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text, Dimensions, Alert, Platform } from 'react-native';
+import { StyleSheet, View, ScrollView, Text, Dimensions, Alert, Platform } from 'react-native';
 import Backdrop from "./backdrops/Backdrop";
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import RNSpeedometer from 'react-native-speedometer';
@@ -72,7 +72,7 @@ export default function Throttle() {
     } else {
         if (Platform.OS === "ios") {
             return (
-                <View>
+                <ScrollView>
                     <Backdrop />
                     <View style={styles.container}>
                         <View style={styles.speedometer}>
@@ -122,7 +122,7 @@ export default function Throttle() {
                             <Text style={{ fontFamily: 'Avenir-Book', color: 'white', fontSize: 18, position: "absolute", top: 405, left: -25 }}>Mode</Text>
                         </View>
                     </View>
-                </View>
+                </ScrollView>
             );
         } else if (Platform.OS === "android") {
             return (
