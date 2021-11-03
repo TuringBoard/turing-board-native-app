@@ -3,87 +3,91 @@ import { Dimensions, Image, StyleSheet, View, Text, Platform } from 'react-nativ
 import CustomButtons from '../components/CustomButtons';
 import Backdrop from './backdrops/Backdrop';
 import { useNavigation } from '@react-navigation/native';
+import AppLoading from 'expo-app-loading';
+import { useFonts } from 'expo-font';
 
 let phoneWidth = Dimensions.get('window').width;
 
-const customFonts = {
-    'Avenir-Book': require('../assets/fonts/AvenirBook.otf')
-}
-
 export default function Dashboard() {
     const navigation = useNavigation();
-
+    let [fontsLoaded] = useFonts({
+        'Avenir-Book': require('../assets/fonts/AvenirBook.otf')
+    });
     const onWarningHandler = () => {
         alert('This feature is currently under construction. 🛠');
     };
-    if (Platform.OS === "ios") {
-        return (
-            <View>
-                <Backdrop />
-                <View style={styles.container}>
-                    <Image source={require('../assets/logov2.png')} style={styles.logo} />
-                    <View style={styles.messageContainer}>
-                        <Text style={[styles.message, { fontSize: 25 }]}>Hello, Sahaj!</Text>
-                        <Text style={styles.message}>What would you like to do today?</Text>
-                        <View style={styles.buttons}>
-                            <View style={styles.row}>
-                                <CustomButtons title="PARK" type="big" name="parking" onPress={onWarningHandler}>
-                                    <Image source={require('../assets/park.png')} style={styles.pic} />
-                                </CustomButtons>
-                                <CustomButtons title="SUMMON" type="big" onPress={onWarningHandler}>
-                                    <Image source={require('../assets/bell2.png')} style={styles.pic} />
-                                </CustomButtons>
-                            </View>
-                            <View style={styles.row}>
-                                <CustomButtons title="FOLLOW" type="big" onPress={onWarningHandler}>
-                                    <Image source={require('../assets/duck.png')} style={styles.pic} />
-                                </CustomButtons>
-                                <CustomButtons title="RIDE" type="big" onPress={() => navigation.navigate('Throttle')}>
-                                    <Image source={require('../assets/skateboard.png')} style={styles.pic} />
-                                </CustomButtons>
-                            </View>
-                            <View style={styles.row}>
-                                <CustomButtons title="Manage Settings ⚙️" type="settings" />
-                            </View>
-                        </View>
-                    </View>
-                </View>
-            </View>
-        );
-    } else if (Platform.OS === "android") {
-        return (
-            <View>
-                <Backdrop />
-                <View style={styles.container}>
-                    <Image source={require('../assets/logov2.png')} style={styles.logo} />
-                    <View style={styles.messageContainer}>
-                        <Text style={[styles.message, { fontSize: 25 }]}>Hello, Sahaj!</Text>
-                        <Text style={styles.message}>What would you like to do today?</Text>
-                        <View style={styles.buttons}>
-                            <View style={styles.row}>
-                                <CustomButtons title="PARK" type="big" name="parking" onPress={onWarningHandler}>
-                                    <Image source={require('../assets/park.png')} style={android.pic} />
-                                </CustomButtons>
-                                <CustomButtons title="SUMMON" type="big" onPress={onWarningHandler}>
-                                    <Image source={require('../assets/bell2.png')} style={android.pic} />
-                                </CustomButtons>
-                            </View>
-                            <View style={styles.row}>
-                                <CustomButtons title="FOLLOW" type="big" onPress={onWarningHandler}>
-                                    <Image source={require('../assets/duck.png')} style={android.pic} />
-                                </CustomButtons>
-                                <CustomButtons title="RIDE" type="big" onPress={() => navigation.navigate('Throttle')}>
-                                    <Image source={require('../assets/skateboard.png')} style={android.pic} />
-                                </CustomButtons>
-                            </View>
-                            <View style={styles.row}>
-                                <CustomButtons title="Manage Settings ⚙️" type="settings" />
+    if (!fontsLoaded) {
+        return (<AppLoading />)
+    } else {
+        if (Platform.OS === "ios") {
+            return (
+                <View>
+                    <Backdrop />
+                    <View style={styles.container}>
+                        <Image source={require('../assets/logov2.png')} style={styles.logo} />
+                        <View style={styles.messageContainer}>
+                            <Text style={[styles.message, { fontSize: 25 }]}>Hello, Sahaj!</Text>
+                            <Text style={styles.message}>What would you like to do today?</Text>
+                            <View style={styles.buttons}>
+                                <View style={styles.row}>
+                                    <CustomButtons title="PARK" type="big" name="parking" onPress={onWarningHandler}>
+                                        <Image source={require('../assets/park.png')} style={styles.pic} />
+                                    </CustomButtons>
+                                    <CustomButtons title="SUMMON" type="big" onPress={onWarningHandler}>
+                                        <Image source={require('../assets/bell2.png')} style={styles.pic} />
+                                    </CustomButtons>
+                                </View>
+                                <View style={styles.row}>
+                                    <CustomButtons title="FOLLOW" type="big" onPress={onWarningHandler}>
+                                        <Image source={require('../assets/duck.png')} style={styles.pic} />
+                                    </CustomButtons>
+                                    <CustomButtons title="RIDE" type="big" onPress={() => navigation.navigate('Throttle')}>
+                                        <Image source={require('../assets/skateboard.png')} style={styles.pic} />
+                                    </CustomButtons>
+                                </View>
+                                <View style={styles.row}>
+                                    <CustomButtons title="Manage Settings ⚙️" type="settings" />
+                                </View>
                             </View>
                         </View>
                     </View>
                 </View>
-            </View>
-        );
+            );
+        } else if (Platform.OS === "android") {
+            return (
+                <View>
+                    <Backdrop />
+                    <View style={styles.container}>
+                        <Image source={require('../assets/logov2.png')} style={styles.logo} />
+                        <View style={styles.messageContainer}>
+                            <Text style={[styles.message, { fontSize: 25 }]}>Hello, Sahaj!</Text>
+                            <Text style={styles.message}>What would you like to do today?</Text>
+                            <View style={styles.buttons}>
+                                <View style={styles.row}>
+                                    <CustomButtons title="PARK" type="big" name="parking" onPress={onWarningHandler}>
+                                        <Image source={require('../assets/park.png')} style={android.pic} />
+                                    </CustomButtons>
+                                    <CustomButtons title="SUMMON" type="big" onPress={onWarningHandler}>
+                                        <Image source={require('../assets/bell2.png')} style={android.pic} />
+                                    </CustomButtons>
+                                </View>
+                                <View style={styles.row}>
+                                    <CustomButtons title="FOLLOW" type="big" onPress={onWarningHandler}>
+                                        <Image source={require('../assets/duck.png')} style={android.pic} />
+                                    </CustomButtons>
+                                    <CustomButtons title="RIDE" type="big" onPress={() => navigation.navigate('Throttle')}>
+                                        <Image source={require('../assets/skateboard.png')} style={android.pic} />
+                                    </CustomButtons>
+                                </View>
+                                <View style={styles.row}>
+                                    <CustomButtons title="Manage Settings ⚙️" type="settings" />
+                                </View>
+                            </View>
+                        </View>
+                    </View>
+                </View>
+            );
+        }
     }
 }
 

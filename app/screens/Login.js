@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { StyleSheet, Dimensions, Platform, View, Text, TextInput } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -6,19 +6,28 @@ import { useNavigation } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import AppLoading from 'expo-app-loading';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-const Stack = createNativeStackNavigator();
 
+import { useAuth } from '../store/auth-context';
+
+const Stack = createNativeStackNavigator();
 
 let phoneWidth = Dimensions.get('window').width;
 let phoneHeight = Dimensions.get('window').height;
 
 export default function Login() {
+    const { login, loginSuccess } = useAuth();
+
+    const emailRef = useRef();
+    const passwordRef = useRef();
+    const androidEmailRef = useRef();
+    const androidPasswordRef = useRef();
     const navigation = useNavigation();
     let [fontsLoaded] = useFonts({
         'Avenir-Book': require('../assets/fonts/AvenirBook.otf')
     });
     const onSubmitHandler = () => {
-        navigation.navigate('Dashboard')
+        console.log(androidEmailRef.current.value)
+        login(androidEmailRef.current.value, androidPasswordRef.current.value);
     }
     if (!fontsLoaded) {
         return (<AppLoading />)
@@ -36,8 +45,22 @@ export default function Login() {
                             <Text style={styles.header}>SIGN IN</Text>
                         </View>
                         <View style={styles.formItems}>
-                            <TextInput style={styles.input} autoCapitalize='none' autoCorrect={false} autoComplete='email' keyboardType='email-address' placeholder="E-mail address"></TextInput>
-                            <TextInput style={styles.input} autoCapitalize='none' autoCorrect={false} autoComplete='password' secureTextEntry={true} placeholder="Password"></TextInput>
+                            <TextInput
+                                style={styles.input}
+                                ref={emailRef}
+                                autoCapitalize='none'
+                                autoCorrect={false}
+                                autoComplete='email'
+                                keyboardType='email-address'
+                                placeholder="E-mail address"></TextInput>
+                            <TextInput
+                                style={styles.input}
+                                ref={passwordRef}
+                                autoCapitalize='none'
+                                autoCorrect={false}
+                                autoComplete='password'
+                                secureTextEntry={true}
+                                placeholder="Password"></TextInput>
                             <TouchableOpacity style={styles.submit} onPress={onSubmitHandler}>
                                 <Text style={styles.submitText}>LOG IN</Text>
                             </TouchableOpacity>
@@ -60,8 +83,21 @@ export default function Login() {
                             <Text style={android.header}>SIGN IN</Text>
                         </View>
                         <View style={android.formItems}>
-                            <TextInput style={styles.input} autoCapitalize='none' autoCorrect={false} autoComplete='email' keyboardType='email-address' placeholder="E-mail address"></TextInput>
-                            <TextInput style={styles.input} autoCapitalize='none' autoCorrect={false} autoComplete='password' secureTextEntry={true} placeholder="Password"></TextInput>
+                            <TextInput style={styles.input}
+                                ref={androidEmailRef}
+                                autoCapitalize='none'
+                                autoCorrect={false}
+                                autoComplete='email'
+                                keyboardType='email-address'
+                                placeholder="E-mail address"></TextInput>
+                            <TextInput style={styles.input}
+                                ref={androidPasswordRef}
+                                autoCapitalize='none'
+                                autoCorrect={false}
+                                autoComplete='password'
+                                secureTextEntry={true}
+                                placeholder="Password"></TextInput>
+
                             <TouchableOpacity style={android.submit} onPress={onSubmitHandler}>
                                 <Text style={android.submitText}>LOG IN</Text>
                             </TouchableOpacity>
