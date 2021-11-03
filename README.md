@@ -6,6 +6,8 @@ The hardware on the Turing Board is to be interfaced with via the Turing Board a
 
 The user is to sign in with an account they can create on the app. From there, they will be taken to a Dashboard screen that opens up the utility of the Turing Board.
 
+<img src="./README/UI.gif"/>
+
 ### Usage for Developers
 
 First, clone the repository to your local file system.
