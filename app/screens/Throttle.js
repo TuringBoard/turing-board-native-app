@@ -144,8 +144,28 @@ export default function Throttle() {
                     <View style={styles.slider}>
                         <MultiSlider
                             containerStyle={android.slider}
-                            trackStyle={{ height: 150, }}
-                            markerStyle={{ backgroundColor: 'white', shadowOpacity: 0, height: 150, width: 50, top: 75, borderRadius: 5 }}
+                            trackStyle={{ height: 150 }}
+                            markerStyle={{ height: 150, top: 24, width: 50, borderRadius: 5, backgroundColor: 'white' }}
+                            pressedMarkerStyle={{ elevation: 3, height: 150, top: 24, width: 50, borderRadius: 5, backgroundColor: 'white' }}
+                            markerContainerStyle={{ height: 150 }}
+                            selectedStyle={{ backgroundColor: 'rgba(256,256,256,0.55)', borderTopLeftRadius: 10, borderBottomLeftRadius: 10 }}
+                            unselectedStyle={{
+                                backgroundColor: 'rgba(256,256,256,0.25)',
+                                borderTopRightRadius: 10,
+                                borderBottomRightRadius: 10
+                            }}
+                            vertical={true}
+                            min={-5}
+                            max={maxSpeed + 0.125}
+                            values={[value]}
+                            step={0.125}
+                            onValuesChange={values => { onThrottleHandler(values[0]) }}
+                            onValuesChangeFinish={() => setValue(0)}
+                        />
+                        {/* <MultiSlider
+                            containerStyle={android.slider}
+                            markerStyle={{ elevation: 3, backgroundColor: 'white', shadowOpacity: 0, height: 150, width: 50, top: 75, borderRadius: 5 }}
+                            pressedMarkerStyle={{ elevation: 3, height: 150, width: 50, borderRadius: 5 }}
                             sliderLength={300}
                             selectedStyle={{ backgroundColor: 'rgba(256,256,256,0.55)', borderTopLeftRadius: 10, borderBottomLeftRadius: 10 }}
                             unselectedStyle={{
@@ -161,7 +181,7 @@ export default function Throttle() {
                             onValuesChangeFinish={() => setValue(0)}
                             vertical={true}
                             touchDimensions={{ height: 150, width: 150, borderRadius: 15, slipDisplacement: 2 }}
-                        />
+                        /> */}
                     </View>
                     <View style={styles.modes}>
                         <CustomButtons title={`CRUISE\n0 - 5 mph`} type="small" name="cruise" onPress={() => changeModeHandler(5)} />
@@ -182,7 +202,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     speedometer: {
         width: phoneWidth,
