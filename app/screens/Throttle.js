@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text, Dimensions, Alert } from 'react-native';
+import { StyleSheet, View, Text, Dimensions, Alert, Platform } from 'react-native';
 import Backdrop from "./backdrops/Backdrop";
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import RNSpeedometer from 'react-native-speedometer';
@@ -65,61 +65,116 @@ export default function Throttle() {
     const onThrottleHandler = (e) => {
         setValue(e)
     }
-
-    return (
-        <View>
-            <Backdrop />
-            <View style={styles.container}>
-                <View style={styles.speedometer}>
-                    <RNSpeedometer
-                        value={value}
-                        minValue={0}
-                        maxValue={20}
-                        allowedDecimals={3}
-                        easeDuration={0}
-                        size={phoneWidth - 125}
-                        labels={labels}
-                        labelStyle={{ display: 'none' }}
-                    />
-                </View>
-                <View style={styles.odometerView}>
-                    <Text style={styles.odometry}>{value < 0 ? "0.00" : value.toFixed(2)} mph</Text>
-                    <Text style={{ color: 'white', textAlign: 'center', fontFamily: 'Avenir-Book' }}>Odometer</Text>
-                    <Text style={{ right: 2, color: 'white', textAlign: 'center', fontFamily: 'Avenir-Book' }}>TRIP: 0.00 mi</Text>
-                </View>
-                <View style={styles.slider}>
-                    <MultiSlider
-                        containerStyle={styles.slider}
-                        trackStyle={{ height: 150 }}
-                        markerStyle={{ backgroundColor: 'white', shadowOpacity: 0, height: 150, width: 50, top: 75, borderRadius: 5 }}
-                        sliderLength={300}
-                        selectedStyle={{ backgroundColor: 'rgba(256,256,256,0.55)', borderTopLeftRadius: 10, borderBottomLeftRadius: 10 }}
-                        unselectedStyle={{
-                            backgroundColor: 'rgba(256,256,256,0.25)',
-                            borderTopRightRadius: 10,
-                            borderBottomRightRadius: 10
-                        }}
-                        min={-5}
-                        max={maxSpeed + 0.125}
-                        values={[value]}
-                        step={0.125}
-                        onValuesChange={values => { onThrottleHandler(values[0]) }}
-                        onValuesChangeFinish={() => setValue(0)}
-                        vertical={true}
-                        touchDimensions={{ height: 150, width: 150, borderRadius: 15, slipDisplacement: 500 }}
-                    />
-                </View>
-                <View style={styles.modes}>
-                    <CustomButtons title={`CRUISE\n0 - 5 mph`} type="small" name="cruise" onPress={() => changeModeHandler(5)} />
-                    <CustomButtons title={`FAST\n0 - 12 mph`} type="small" name="fast" onPress={() => changeModeHandler(12)} />
-                    <CustomButtons title={`LUDICROUS\n0 - ⚡️ mph`} type="small" name="ludicrous" onPress={() => changeModeHandler(20)} />
-                </View>
-                <View>
-                    <Text style={{ fontFamily: 'Avenir-Book', color: 'white', fontSize: 18, position: "absolute", top: 405, left: 20 }}>Mode</Text>
+    if (Platform.OS === "ios") {
+        return (
+            <View>
+                <Backdrop />
+                <View style={styles.container}>
+                    <View style={styles.speedometer}>
+                        <RNSpeedometer
+                            value={value}
+                            minValue={0}
+                            maxValue={20}
+                            allowedDecimals={3}
+                            easeDuration={0}
+                            size={phoneWidth - 125}
+                            labels={labels}
+                            labelStyle={{ display: 'none' }}
+                        />
+                    </View>
+                    <View style={styles.odometerView}>
+                        <Text style={styles.odometry}>{value < 0 ? "0.00" : value.toFixed(2)} mph</Text>
+                        <Text style={{ color: 'white', textAlign: 'center', fontFamily: 'Avenir-Book' }}>Odometer</Text>
+                        <Text style={{ right: 2, color: 'white', textAlign: 'center', fontFamily: 'Avenir-Book' }}>TRIP: 0.00 mi</Text>
+                    </View>
+                    <View style={styles.slider}>
+                        <MultiSlider
+                            containerStyle={styles.slider}
+                            trackStyle={{ height: 150 }}
+                            markerStyle={{ backgroundColor: 'white', shadowOpacity: 0, height: 150, width: 50, top: 75, borderRadius: 5 }}
+                            sliderLength={300}
+                            selectedStyle={{ backgroundColor: 'rgba(256,256,256,0.55)', borderTopLeftRadius: 10, borderBottomLeftRadius: 10 }}
+                            unselectedStyle={{
+                                backgroundColor: 'rgba(256,256,256,0.25)',
+                                borderTopRightRadius: 10,
+                                borderBottomRightRadius: 10
+                            }}
+                            min={-5}
+                            max={maxSpeed + 0.125}
+                            values={[value]}
+                            step={0.125}
+                            onValuesChange={values => { onThrottleHandler(values[0]) }}
+                            onValuesChangeFinish={() => setValue(0)}
+                            vertical={true}
+                        />
+                    </View>
+                    <View style={styles.modes}>
+                        <CustomButtons title={`CRUISE\n0 - 5 mph`} type="small" name="cruise" onPress={() => changeModeHandler(5)} />
+                        <CustomButtons title={`FAST\n0 - 12 mph`} type="small" name="fast" onPress={() => changeModeHandler(12)} />
+                        <CustomButtons title={`LUDICROUS\n0 - ⚡️ mph`} type="small" name="ludicrous" onPress={() => changeModeHandler(20)} />
+                    </View>
+                    <View>
+                        <Text style={{ fontFamily: 'Avenir-Book', color: 'white', fontSize: 18, position: "absolute", top: 405, left: -25 }}>Mode</Text>
+                    </View>
                 </View>
             </View>
-        </View>
-    );
+        );
+    } else if (Platform.OS === "android") {
+        return (
+            <View>
+                <Backdrop />
+                <View style={styles.container}>
+                    <View style={android.speedometer}>
+                        <RNSpeedometer
+                            value={value}
+                            minValue={0}
+                            maxValue={20}
+                            allowedDecimals={3}
+                            easeDuration={0}
+                            size={phoneWidth - 125}
+                            labels={labels}
+                            labelStyle={{ display: 'none' }}
+                        />
+                    </View>
+                    <View style={styles.odometerView}>
+                        <Text style={styles.odometry}>{value < 0 ? "0.00" : value.toFixed(2)} mph</Text>
+                        <Text style={{ color: 'white', textAlign: 'center', fontFamily: 'Avenir-Book' }}>Odometer</Text>
+                        <Text style={{ right: 2, color: 'white', textAlign: 'center', fontFamily: 'Avenir-Book' }}>TRIP: 0.00 mi</Text>
+                    </View>
+                    <View style={styles.slider}>
+                        <MultiSlider
+                            containerStyle={android.slider}
+                            trackStyle={{ height: 150, }}
+                            markerStyle={{ backgroundColor: 'white', shadowOpacity: 0, height: 150, width: 50, top: 75, borderRadius: 5 }}
+                            sliderLength={300}
+                            selectedStyle={{ backgroundColor: 'rgba(256,256,256,0.55)', borderTopLeftRadius: 10, borderBottomLeftRadius: 10 }}
+                            unselectedStyle={{
+                                backgroundColor: 'rgba(256,256,256,0.25)',
+                                borderTopRightRadius: 10,
+                                borderBottomRightRadius: 10
+                            }}
+                            min={-5}
+                            max={maxSpeed + 0.125}
+                            values={[value]}
+                            step={0.125}
+                            onValuesChange={values => { onThrottleHandler(values[0]) }}
+                            onValuesChangeFinish={() => setValue(0)}
+                            vertical={true}
+                            touchDimensions={{ height: 150, width: 150, borderRadius: 15, slipDisplacement: 2 }}
+                        />
+                    </View>
+                    <View style={styles.modes}>
+                        <CustomButtons title={`CRUISE\n0 - 5 mph`} type="small" name="cruise" onPress={() => changeModeHandler(5)} />
+                        <CustomButtons title={`FAST\n0 - 12 mph`} type="small" name="fast" onPress={() => changeModeHandler(12)} />
+                        <CustomButtons title={`LUDICROUS\n0 - ⚡️ mph`} type="small" name="ludicrous" onPress={() => changeModeHandler(20)} />
+                    </View>
+                    <View>
+                        <Text style={{ fontFamily: 'Avenir-Book', color: 'white', fontSize: 18, position: "absolute", top: 405, left: -25 }}>Mode</Text>
+                    </View>
+                </View>
+            </View>
+        );
+    }
 }
 
 const styles = StyleSheet.create({
@@ -130,12 +185,11 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     speedometer: {
-        top: 100,
-        left: 45
+        width: phoneWidth,
+        top: 100
     },
     odometerView: {
         top: 100,
-        left: 50
     },
     odometry: {
         color: 'white',
@@ -145,7 +199,6 @@ const styles = StyleSheet.create({
     slider: {
         flex: 1,
         top: 130,
-        left: 23,
         alignContent: 'center',
         justifyContent: 'center'
     },
@@ -155,6 +208,20 @@ const styles = StyleSheet.create({
         top: 720,
         justifyContent: "space-between",
         width: phoneWidth * 0.9,
-        position: "absolute"
+        position: "absolute",
+        left: -20
+    }
+});
+
+const android = StyleSheet.create({
+    speedometer: {
+        width: phoneWidth,
+        top: 100,
+    },
+    slider: {
+        flex: 1,
+        top: 130,
+        alignContent: 'center',
+        justifyContent: 'center',
     }
 });
