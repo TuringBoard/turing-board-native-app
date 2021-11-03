@@ -9,6 +9,7 @@ The user is to sign in with an account they can create on the app. From there, t
 <p align="center">
     <img src="./README/UI.gif"/>
 <p>
+
 ### Usage for Developers
 
 First, clone the repository to your local file system.
