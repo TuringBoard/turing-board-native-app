@@ -26,8 +26,7 @@ export default function Login() {
         'Avenir-Book': require('../assets/fonts/AvenirBook.otf')
     });
     const onSubmitHandler = () => {
-        console.log(androidEmailRef.current.value)
-        login(androidEmailRef.current.value, androidPasswordRef.current.value);
+        navigation.navigate('Dashboard')
     }
     if (!fontsLoaded) {
         return (<AppLoading />)
