@@ -31,8 +31,32 @@ Then, install the Expo CLI
 $ npm install --global expo-cli
 ```
 
+Install the React Native CLI
+
+```
+$ npm install -g react-native-cli
+```
+
 Now you may start installing the dependencies required.
 
 ```
 $ npm install
+```
+
+After installing the node modules, you want to edit one of package files to avoid getting an annoying error regarding `AsyncStorage`. Go to `node_modules/@firebase/auth/dist/rn/index.js`. Add a line around line 5:
+
+```
+var asyncStorage = require('@react-native-async-storage/async-storage')
+```
+
+Then change the following line (around line 127) from:
+
+```
+var reactNativeLocalPersistence = getReactNativePersistence(reactNative.AsyncStorage);
+```
+
+to
+
+```
+var reactNativeLocalPersistence = getReactNativePersistence(asyncStorage.AsyncStorage);
 ```

@@ -6,6 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 import WelcomeScreen from './app/screens/WelcomeScreen';
 import Dashboard from './app/screens/Dashboard';
 import Throttle from './app/screens/Throttle';
+import Settings from './app/screens/Settings';
 
 import { AuthContextProvider } from './app/store/auth-context';
 
@@ -13,8 +14,8 @@ const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <AuthContextProvider>
-      <NavigationContainer>
+    <NavigationContainer>
+      <AuthContextProvider>
         <Stack.Navigator>
           <Stack.Screen name="Welcome Screen" component={WelcomeScreen}
             options={{
@@ -34,9 +35,15 @@ export default function App() {
               headerShown: false
             }}
           />
+          <Stack.Screen name="Settings" component={Settings}
+            options={{
+              title: 'Settings',
+              headerShown: false
+            }}
+          />
         </Stack.Navigator>
-      </NavigationContainer>
-    </AuthContextProvider>
+      </AuthContextProvider>
+    </NavigationContainer>
   );
 }
 

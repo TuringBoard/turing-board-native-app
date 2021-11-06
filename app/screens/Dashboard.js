@@ -46,7 +46,7 @@ export default function Dashboard() {
                                     </CustomButtons>
                                 </View>
                                 <View style={styles.row}>
-                                    <CustomButtons title="Manage Settings ⚙️" type="settings" />
+                                    <CustomButtons title="Manage Settings ⚙️" type="settings" onPress={() => navigation.navigate('Settings')} />
                                 </View>
                             </View>
                         </View>

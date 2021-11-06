@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { StyleSheet, Dimensions, Platform, View, Text, TextInput } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import AppLoading from 'expo-app-loading';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from '../store/auth-context';
 
 const Stack = createNativeStackNavigator();
@@ -17,6 +17,10 @@ let phoneHeight = Dimensions.get('window').height;
 export default function Login() {
     const { login, loginSuccess } = useAuth();
 
+    const [values, setValues] = useState({
+        email: "",
+        password: ""
+    })
     const emailRef = useRef();
     const passwordRef = useRef();
     const androidEmailRef = useRef();
@@ -25,9 +29,39 @@ export default function Login() {
     let [fontsLoaded] = useFonts({
         'Avenir-Book': require('../assets/fonts/AvenirBook.otf')
     });
-    const onSubmitHandler = () => {
-        navigation.navigate('Dashboard')
+
+    const printScreen = () => {
+        AsyncStorage.getAllKeys().then((keyArray) => {
+            AsyncStorage.multiGet(keyArray).then((keyValArray) => {
+                let myStorage = {};
+                for (let keyVal of keyValArray) {
+                    myStorage[keyVal[0]] = keyVal[1]
+                }
+
+                console.log('CURRENT STORAGE from Login: ', myStorage);
+            })
+        });
     }
+
+    const onChangeTextHandler = (text, eventName) => {
+        setValues(prev => {
+            return {
+                ...prev,
+                [eventName]: text
+            }
+        });
+    }
+
+    const onSubmitHandler = async () => {
+        await login(values.email, values.password)
+        printScreen();
+        console.log(loginSuccess + " from sahaj")
+        setValues({
+            email: "",
+            password: ""
+        })
+    }
+
     if (!fontsLoaded) {
         return (<AppLoading />)
     } else {
@@ -46,20 +80,24 @@ export default function Login() {
                         <View style={styles.formItems}>
                             <TextInput
                                 style={styles.input}
-                                ref={emailRef}
+                                value={values.email}
                                 autoCapitalize='none'
                                 autoCorrect={false}
                                 autoComplete='email'
                                 keyboardType='email-address'
-                                placeholder="E-mail address"></TextInput>
+                                placeholder="E-mail address"
+                                onChangeText={text => onChangeTextHandler(text, "email")}
+                            ></TextInput>
                             <TextInput
                                 style={styles.input}
-                                ref={passwordRef}
+                                value={values.password}
                                 autoCapitalize='none'
                                 autoCorrect={false}
                                 autoComplete='password'
                                 secureTextEntry={true}
-                                placeholder="Password"></TextInput>
+                                placeholder="Password"
+                                onChangeText={text => onChangeTextHandler(text, "password")}
+                            ></TextInput>
                             <TouchableOpacity style={styles.submit} onPress={onSubmitHandler}>
                                 <Text style={styles.submitText}>LOG IN</Text>
                             </TouchableOpacity>
@@ -88,14 +126,18 @@ export default function Login() {
                                 autoCorrect={false}
                                 autoComplete='email'
                                 keyboardType='email-address'
-                                placeholder="E-mail address"></TextInput>
+                                placeholder="E-mail address"
+                                onChangeText={text => onChangeTextHandler(text, "email")}
+                            ></TextInput>
                             <TextInput style={styles.input}
                                 ref={androidPasswordRef}
                                 autoCapitalize='none'
                                 autoCorrect={false}
                                 autoComplete='password'
                                 secureTextEntry={true}
-                                placeholder="Password"></TextInput>
+                                placeholder="Password"
+                                onChangeText={text => onChangeTextHandler(text, "password")}
+                            ></TextInput>
 
                             <TouchableOpacity style={android.submit} onPress={onSubmitHandler}>
                                 <Text style={android.submitText}>LOG IN</Text>
