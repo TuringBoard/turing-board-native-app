@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, ScrollView, Text, Dimensions, Alert, Platform } from 'react-native';
+import { StyleSheet, View, Text, Dimensions, Alert, Platform } from 'react-native';
 import Backdrop from "./backdrops/Backdrop";
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import RNSpeedometer from 'react-native-speedometer';
@@ -16,18 +16,19 @@ export default function Throttle() {
         'Avenir-Book': require('../assets/fonts/AvenirBook.otf')
     });
 
-    useEffect(() => {
-        AsyncStorage.getAllKeys().then((keyArray) => {
-            AsyncStorage.multiGet(keyArray).then((keyValArray) => {
-                let myStorage = {};
-                for (let keyVal of keyValArray) {
-                    myStorage[keyVal[0]] = keyVal[1]
-                }
+    // useEffect(() => {
+    //     AsyncStorage.getAllKeys().then((keyArray) => {
+    //         AsyncStorage.multiGet(keyArray).then((keyValArray) => {
+    //             let myStorage = {};
+    //             for (let keyVal of keyValArray) {
+    //                 myStorage[keyVal[0]] = keyVal[1]
+    //             }
 
-                console.log('CURRENT STORAGE: ', myStorage);
-            })
-        });
-    }, [])
+    //             console.log('CURRENT STORAGE: ', myStorage);
+    //         })
+    //     });
+    // }, [])
+
     const changeModeHandler = (maxSpeedVal) => {
         Alert.alert(
             "Confirm Speed Mode",

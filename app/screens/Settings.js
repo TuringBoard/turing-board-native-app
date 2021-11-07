@@ -3,7 +3,6 @@ import { View, StyleSheet } from 'react-native';
 import CustomButtons from '../components/CustomButtons';
 import Backdrop from './backdrops/Backdrop';
 import { useAuth } from '../store/auth-context';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Settings() {
     const { logout } = useAuth();

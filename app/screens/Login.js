@@ -1,34 +1,35 @@
-import React, { useRef, useState } from 'react';
-import { StyleSheet, Dimensions, Platform, View, Text, TextInput } from 'react-native';
+import React, { useRef, useState, useEffect } from 'react';
+import { StyleSheet, Dimensions, Platform, View, Text, TextInput, Alert } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useNavigation } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import AppLoading from 'expo-app-loading';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from '../store/auth-context';
 
-const Stack = createNativeStackNavigator();
 
 let phoneWidth = Dimensions.get('window').width;
 let phoneHeight = Dimensions.get('window').height;
 
-export default function Login() {
-    const { login, loginSuccess } = useAuth();
-
+export default function Login({ loginMode }) {
+    const { login, loginSuccess, isLoggedIn } = useAuth();
+    const [loginAttempted, setLoginAttempted] = useState(false);
+    const [isError, setIsError] = useState(false)
     const [values, setValues] = useState({
         email: "",
         password: ""
     })
-    const emailRef = useRef();
-    const passwordRef = useRef();
-    const androidEmailRef = useRef();
-    const androidPasswordRef = useRef();
-    const navigation = useNavigation();
     let [fontsLoaded] = useFonts({
         'Avenir-Book': require('../assets/fonts/AvenirBook.otf')
     });
+
+    useEffect(() => {
+        if (loginAttempted && !loginSuccess) {
+            setIsError(true)
+        } else if (loginAttempted && loginSuccess) {
+            setIsError(false)
+        }
+    }, [loginAttempted, loginSuccess]);
 
     const printScreen = () => {
         AsyncStorage.getAllKeys().then((keyArray) => {
@@ -37,7 +38,6 @@ export default function Login() {
                 for (let keyVal of keyValArray) {
                     myStorage[keyVal[0]] = keyVal[1]
                 }
-
                 console.log('CURRENT STORAGE from Login: ', myStorage);
             })
         });
@@ -53,9 +53,12 @@ export default function Login() {
     }
 
     const onSubmitHandler = async () => {
-        await login(values.email, values.password)
-        printScreen();
-        console.log(loginSuccess + " from sahaj")
+        setLoginAttempted(true)
+        try {
+            await login(values.email, values.password)
+        } catch (error) {
+            alert(error)
+        }
         setValues({
             email: "",
             password: ""
@@ -79,7 +82,7 @@ export default function Login() {
                         </View>
                         <View style={styles.formItems}>
                             <TextInput
-                                style={styles.input}
+                                style={isError ? styles.inputError : styles.input}
                                 value={values.email}
                                 autoCapitalize='none'
                                 autoCorrect={false}
@@ -89,7 +92,7 @@ export default function Login() {
                                 onChangeText={text => onChangeTextHandler(text, "email")}
                             ></TextInput>
                             <TextInput
-                                style={styles.input}
+                                style={isError ? styles.inputError : styles.input}
                                 value={values.password}
                                 autoCapitalize='none'
                                 autoCorrect={false}
@@ -104,11 +107,16 @@ export default function Login() {
                         </View>
                         <View style={styles.footerContainer}>
                             <Text style={{ color: 'white' }}>
-                                <TouchableOpacity><Text style={styles.footerItems}>Forgot Password?</Text></TouchableOpacity><Text> or </Text><TouchableOpacity><Text style={styles.footerItems}>Sign Up!</Text></TouchableOpacity>
+                                <TouchableOpacity onPress={() => { Alert.alert("Just contact Sahaj", "Writing code for this isn't worth the time, he'll manually email you the password reset link.") }}><Text style={styles.footerItems}>Forgot Password?</Text></TouchableOpacity><Text> or </Text><TouchableOpacity onPress={loginMode}><Text style={styles.footerItems}>Sign Up!</Text></TouchableOpacity>
                             </Text>
                         </View>
                     </View>
-                </KeyboardAwareScrollView>
+                    {isError &&
+                        <View style={styles.errorContainer}>
+                            <Text style={styles.error}>Invalid email or password, please try again.</Text>
+                        </View>
+                    }
+                </KeyboardAwareScrollView >
             )
         } else if (Platform.OS === 'android') {
             return (
@@ -120,8 +128,8 @@ export default function Login() {
                             <Text style={android.header}>SIGN IN</Text>
                         </View>
                         <View style={android.formItems}>
-                            <TextInput style={styles.input}
-                                ref={androidEmailRef}
+                            <TextInput
+                                style={isError ? styles.inputError : styles.input}
                                 autoCapitalize='none'
                                 autoCorrect={false}
                                 autoComplete='email'
@@ -129,8 +137,8 @@ export default function Login() {
                                 placeholder="E-mail address"
                                 onChangeText={text => onChangeTextHandler(text, "email")}
                             ></TextInput>
-                            <TextInput style={styles.input}
-                                ref={androidPasswordRef}
+                            <TextInput
+                                style={isError ? styles.inputError : styles.input}
                                 autoCapitalize='none'
                                 autoCorrect={false}
                                 autoComplete='password'
@@ -237,6 +245,15 @@ const styles = StyleSheet.create({
         marginBottom: 7,
         fontFamily: 'Avenir-Book',
     },
+    inputError: {
+        backgroundColor: 'rgb(255, 166, 157)',
+        width: '90%',
+        borderRadius: 5,
+        opacity: 0.75,
+        padding: 10,
+        marginBottom: 7,
+        fontFamily: 'Avenir-Book',
+    },
     formItems: {
         flex: 1,
         flexDirection: 'column',
@@ -284,4 +301,24 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(256, 256, 256, 0.25)',
         borderRadius: 20,
     },
+    errorContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        top: 130
+    },
+    error: {
+        color: 'rgb(255, 180, 180)',
+        fontFamily: 'Avenir-Book',
+    },
+    successContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        top: 130
+    },
+    success: {
+        color: 'rgb(180, 255, 180)',
+        fontFamily: 'Avenir-Book',
+    }
 })
