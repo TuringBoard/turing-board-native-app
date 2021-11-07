@@ -1,11 +1,12 @@
-import React, { useState } from "react";
-import { StyleSheet, View, ScrollView, Text, Dimensions, Alert, Platform } from 'react-native';
+import React, { useEffect, useState } from "react";
+import { StyleSheet, View, Text, Dimensions, Alert, Platform } from 'react-native';
 import Backdrop from "./backdrops/Backdrop";
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import RNSpeedometer from 'react-native-speedometer';
 import CustomButtons from "../components/CustomButtons";
 import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 let phoneWidth = Dimensions.get('window').width;
 export default function Throttle() {
@@ -14,6 +15,20 @@ export default function Throttle() {
     let [fontsLoaded] = useFonts({
         'Avenir-Book': require('../assets/fonts/AvenirBook.otf')
     });
+
+    // useEffect(() => {
+    //     AsyncStorage.getAllKeys().then((keyArray) => {
+    //         AsyncStorage.multiGet(keyArray).then((keyValArray) => {
+    //             let myStorage = {};
+    //             for (let keyVal of keyValArray) {
+    //                 myStorage[keyVal[0]] = keyVal[1]
+    //             }
+
+    //             console.log('CURRENT STORAGE: ', myStorage);
+    //         })
+    //     });
+    // }, [])
+
     const changeModeHandler = (maxSpeedVal) => {
         Alert.alert(
             "Confirm Speed Mode",
@@ -72,7 +87,7 @@ export default function Throttle() {
     } else {
         if (Platform.OS === "ios") {
             return (
-                <ScrollView>
+                <View>
                     <Backdrop />
                     <View style={styles.container}>
                         <View style={styles.speedometer}>
@@ -122,7 +137,7 @@ export default function Throttle() {
                             <Text style={{ fontFamily: 'Avenir-Book', color: 'white', fontSize: 18, position: "absolute", top: 405, left: -25 }}>Mode</Text>
                         </View>
                     </View>
-                </ScrollView>
+                </View>
             );
         } else if (Platform.OS === "android") {
             return (

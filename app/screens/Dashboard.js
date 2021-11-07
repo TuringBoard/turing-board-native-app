@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Dimensions, Image, StyleSheet, View, ScrollView, Text, Platform } from 'react-native';
 import CustomButtons from '../components/CustomButtons';
 import Backdrop from './backdrops/Backdrop';
@@ -8,7 +8,7 @@ import { useFonts } from 'expo-font';
 
 let phoneWidth = Dimensions.get('window').width;
 
-export default function Dashboard() {
+export default function Dashboard(props) {
     const navigation = useNavigation();
     let [fontsLoaded] = useFonts({
         'Avenir-Book': require('../assets/fonts/AvenirBook.otf')
@@ -16,6 +16,9 @@ export default function Dashboard() {
     const onWarningHandler = () => {
         alert('This feature is currently under construction. 🛠');
     };
+
+    useEffect(() => {
+    }, [])
     if (!fontsLoaded) {
         return (<AppLoading />)
     } else {
@@ -46,7 +49,7 @@ export default function Dashboard() {
                                     </CustomButtons>
                                 </View>
                                 <View style={styles.row}>
-                                    <CustomButtons title="Manage Settings ⚙️" type="settings" />
+                                    <CustomButtons title="Manage Settings ⚙️" type="settings" onPress={() => navigation.navigate('Settings')} />
                                 </View>
                             </View>
                         </View>
