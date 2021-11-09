@@ -22,28 +22,28 @@ export default function WelcomeScreen(props) {
     }
     return (
         <ScrollView>
-            <KeyboardAwareScrollView
+            {/* <KeyboardAwareScrollView
                 behavior="padding"
                 resetScrollToCoords={{ x: 0, y: 0 }}
                 scrollEnabled={false}
                 style={{ width: phoneWidth, height: phoneHeight - 250 }}
-            >
-                <Backdrop />
-                <View style={styles.container}>
-                    <Image source={require('../assets/logov2.png')} style={styles.logo} />
-                    {authAction === "login"
-                        ? <Login loginMode={setActionHelper} />
-                        : <Signup loginMode={setActionHelper} />
-                    }
-                </View>
-                <Image source={require('../assets/skate.gif')} style={{
-                    width: 185,
-                    height: 185,
-                    position: 'absolute',
-                    bottom: 0,
-                    right: 0
-                }} />
-            </KeyboardAwareScrollView>
+            > */}
+            <Backdrop />
+            <View style={styles.container}>
+                <Image source={require('../assets/logov2.png')} style={styles.logo} />
+                {authAction === "login"
+                    ? <Login loginMode={setActionHelper} />
+                    : <Signup loginMode={setActionHelper} />
+                }
+            </View>
+            <Image source={require('../assets/skate.gif')} style={{
+                width: 185,
+                height: 185,
+                position: 'absolute',
+                bottom: 0,
+                right: 0
+            }} />
+            {/* </KeyboardAwareScrollView> */}
         </ScrollView>
     );
 }
