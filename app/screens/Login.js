@@ -74,7 +74,7 @@ export default function Login({ loginMode }) {
                     behavior="padding"
                     resetScrollToCoords={{ x: 0, y: 0 }}
                     scrollEnabled={false}
-                    style={{ width: phoneWidth, height: phoneHeight - 250 }}
+                    style={{ width: phoneWidth, height: phoneHeight }}
                 >
                     <View style={styles.form}>
                         <View>
