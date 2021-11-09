@@ -6,34 +6,20 @@ import Backdrop from './backdrops/Backdrop';
 import { useNavigation } from '@react-navigation/native';
 import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
-import { useAuth } from '../store/auth-context';
-
-const db = getFirestore();
+import { useAuth } from '../store/auth-context';;
 
 let phoneWidth = Dimensions.get('window').width;
 let phoneHeight = Dimensions.get('window').height;
 
 export default function Dashboard(props) {
-    const { uid } = useAuth()
+    const { uid, firstName } = useAuth()
     const navigation = useNavigation();
-    const [firstName, setFirstName] = useState();
     let [fontsLoaded] = useFonts({
         'Avenir-Book': require('../assets/fonts/AvenirBook.otf')
     });
     const onWarningHandler = () => {
         alert('This feature is currently under construction. 🛠');
     };
-
-    useEffect(() => {
-        async function getData() {
-            const q = query(collection(db, "users"), where("id", "==", uid));
-            const querySnapshot = await getDocs(q);
-            querySnapshot.forEach((doc) => {
-                setFirstName(doc.data().firstName)
-            });
-        }
-        getData();
-    }, [uid]);
 
     if (!fontsLoaded) {
         return (<AppLoading />)

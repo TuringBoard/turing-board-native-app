@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { auth } from '../APIs/firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, getAuth } from '@firebase/auth';
-import { getFirestore, doc, setDoc } from 'firebase/firestore';
+import { getFirestore, doc, setDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AuthContext = React.createContext({
@@ -18,7 +18,8 @@ export const AuthContextProvider = ({ children }) => {
     const [loginSuccess, setLoginSuccess] = useState(false);
     const [signupSuccess, setSignupSuccess] = useState(false);
     const [uid, setUid] = useState("")
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState();
+    const [firstName, setFirstName] = useState();
 
     const signup = (email, password, firstName, lastName) => {
         createUserWithEmailAndPassword(auth, email, password)
@@ -37,9 +38,7 @@ export const AuthContextProvider = ({ children }) => {
                 alert(error)
             });
     }
-    const dummyLogin = () => {
-        setIsLoggedIn(true)
-    }
+
     const login = (email, password) => {
         signInWithEmailAndPassword(auth, email, password).then(async () => {
             const myAuth = getAuth();
@@ -82,16 +81,28 @@ export const AuthContextProvider = ({ children }) => {
         })
     }, [])
 
+    useEffect(async () => {
+        setIsLoggedIn(await AsyncStorage.getItem('isLoggedIn') === 'true' ? true : false)
+        async function getData() {
+            const q = query(collection(db, "users"), where("id", "==", await AsyncStorage.getItem('uid')));
+            const querySnapshot = await getDocs(q);
+            querySnapshot.forEach((doc) => {
+                setFirstName(doc.data().firstName)
+            });
+        }
+        getData();
+    }, []);
+
     const value = {
         currentUser,
         isLoggedIn,
         signup,
         login,
         logout,
-        dummyLogin,
         loginSuccess,
         signupSuccess,
-        uid
+        uid,
+        firstName
     }
 
     return (
