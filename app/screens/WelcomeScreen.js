@@ -16,7 +16,6 @@ let phoneHeight = Dimensions.get('window').height;
 
 export default function WelcomeScreen(props) {
     const [authAction, setAuthAction] = useState("signup");
-    const { dummyLogin } = useAuth();
     const navigate = useNavigation();
     const setActionHelper = () => {
         if (authAction === "login") {
@@ -26,9 +25,6 @@ export default function WelcomeScreen(props) {
         }
     }
 
-    const nav = () => {
-        dummyLogin()
-    }
     return (
         <KeyboardAwareScrollView
             behavior="padding"
