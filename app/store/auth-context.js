@@ -19,7 +19,7 @@ export const AuthContextProvider = ({ children }) => {
     const [signupSuccess, setSignupSuccess] = useState(false);
     const [uid, setUid] = useState("")
     const [isLoggedIn, setIsLoggedIn] = useState();
-    const [firstName, setFirstName] = useState();
+    const [firstName, setFirstName] = useState("Friend");
 
     const signup = (email, password, firstName, lastName) => {
         createUserWithEmailAndPassword(auth, email, password)
@@ -82,7 +82,6 @@ export const AuthContextProvider = ({ children }) => {
     }, [])
 
     useEffect(async () => {
-        setIsLoggedIn(await AsyncStorage.getItem('isLoggedIn') === 'true' ? true : false)
         async function getData() {
             const q = query(collection(db, "users"), where("id", "==", await AsyncStorage.getItem('uid')));
             const querySnapshot = await getDocs(q);
@@ -91,6 +90,7 @@ export const AuthContextProvider = ({ children }) => {
             });
         }
         getData();
+        setIsLoggedIn(await AsyncStorage.getItem('isLoggedIn') === 'true' ? true : false)
     }, []);
 
     const value = {
