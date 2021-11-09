@@ -38,18 +38,8 @@ export default function WelcomeScreen(props) {
         >
             <Backdrop />
             <View style={styles.container}>
-                <TouchableWithoutFeedback
-                    onPress={nav}
-                    style={{
-                        borderTopColor: 'red',
-                        borderTopWidth: 2,
-                        borderBottomColor: 'red',
-                        borderBottomWidth: 2,
-                    }}
-                >
-                    <Image source={require('../assets/logov2.png')} style={styles.logo}
-                    />
-                </TouchableWithoutFeedback>
+                <Image source={require('../assets/logov2.png')} style={styles.logo}
+                />
                 {authAction === "login"
                     ? <Login loginMode={setActionHelper} />
                     : <Signup loginMode={setActionHelper} />
@@ -67,6 +57,6 @@ const styles = StyleSheet.create({
         width: 150,
         height: 150,
         left: (phoneWidth / 2) - 75,
-        top: 100,
+        top: phoneHeight > 670 ? 100 : 30,
     },
 })

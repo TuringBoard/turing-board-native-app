@@ -1,15 +1,22 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dimensions, Image, StyleSheet, View, ScrollView, Text, Platform } from 'react-native';
+import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
 import CustomButtons from '../components/CustomButtons';
 import Backdrop from './backdrops/Backdrop';
 import { useNavigation } from '@react-navigation/native';
 import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
+import { useAuth } from '../store/auth-context';
+
+const db = getFirestore();
 
 let phoneWidth = Dimensions.get('window').width;
+let phoneHeight = Dimensions.get('window').height;
 
 export default function Dashboard(props) {
+    const { uid } = useAuth()
     const navigation = useNavigation();
+    const [firstName, setFirstName] = useState();
     let [fontsLoaded] = useFonts({
         'Avenir-Book': require('../assets/fonts/AvenirBook.otf')
     });
@@ -18,18 +25,27 @@ export default function Dashboard(props) {
     };
 
     useEffect(() => {
-    }, [])
+        async function getData() {
+            const q = query(collection(db, "users"), where("id", "==", uid));
+            const querySnapshot = await getDocs(q);
+            querySnapshot.forEach((doc) => {
+                setFirstName(doc.data().firstName)
+            });
+        }
+        getData();
+    }, [uid]);
+
     if (!fontsLoaded) {
         return (<AppLoading />)
     } else {
         if (Platform.OS === "ios") {
             return (
-                <ScrollView>
+                <View>
                     <Backdrop />
                     <View style={styles.container}>
                         <Image source={require('../assets/logov2.png')} style={styles.logo} />
                         <View style={styles.messageContainer}>
-                            <Text style={[styles.message, { fontSize: 25 }]}>Hello, Sahaj!</Text>
+                            <Text style={[styles.message, { fontSize: 25 }]}>Hello, {firstName}!</Text>
                             <Text style={styles.message}>What would you like to do today?</Text>
                             <View style={styles.buttons}>
                                 <View style={styles.row}>
@@ -54,7 +70,7 @@ export default function Dashboard(props) {
                             </View>
                         </View>
                     </View>
-                </ScrollView>
+                </View>
             );
         } else if (Platform.OS === "android") {
             return (
@@ -111,12 +127,12 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
         left: (phoneWidth / 2) - 50,
-        top: 70,
+        top: phoneHeight > 670 ? 70 : 30
     },
     messageContainer: {
         position: 'absolute',
         width: phoneWidth,
-        top: 190,
+        top: phoneHeight > 670 ? 190 : 140
     },
     message: {
         color: 'white',

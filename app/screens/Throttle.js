@@ -9,6 +9,7 @@ import { useFonts } from 'expo-font';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 let phoneWidth = Dimensions.get('window').width;
+let phoneHeight = Dimensions.get('window').height;
 export default function Throttle() {
     const [value, setValue] = useState(0);
     const [maxSpeed, setMaxSpeed] = useState(5);
@@ -87,7 +88,7 @@ export default function Throttle() {
     } else {
         if (Platform.OS === "ios") {
             return (
-                <ScrollView>
+                <View>
                     <Backdrop />
                     <View style={styles.container}>
                         <View style={styles.speedometer}>
@@ -110,8 +111,12 @@ export default function Throttle() {
                         <View style={styles.slider}>
                             <MultiSlider
                                 containerStyle={styles.slider}
-                                trackStyle={{ height: 150 }}
-                                markerStyle={{ backgroundColor: 'white', shadowOpacity: 0, height: 150, width: 50, top: 75, borderRadius: 5 }}
+                                trackStyle={phoneHeight > 670 ? { height: 150, } : { height: 120 }}
+                                markerStyle={
+                                    phoneHeight > 670
+                                        ? { backgroundColor: 'white', shadowOpacity: 0, height: 150, width: 50, top: 75, borderRadius: 5 }
+                                        : { backgroundColor: 'white', shadowOpacity: 0, height: 120, width: 50, top: 60, borderRadius: 5 }
+                                }
                                 sliderLength={300}
                                 selectedStyle={{ backgroundColor: 'rgba(256,256,256,0.55)', borderTopLeftRadius: 10, borderBottomLeftRadius: 10 }}
                                 unselectedStyle={{
@@ -137,7 +142,7 @@ export default function Throttle() {
                             <Text style={{ fontFamily: 'Avenir-Book', color: 'white', fontSize: 18, position: "absolute", top: 405, left: -25 }}>Mode</Text>
                         </View>
                     </View>
-                </ScrollView>
+                </View>
             );
         } else if (Platform.OS === "android") {
             return (
@@ -207,10 +212,10 @@ const styles = StyleSheet.create({
     },
     speedometer: {
         width: phoneWidth,
-        top: 100
+        top: phoneHeight > 670 ? 100 : 45
     },
     odometerView: {
-        top: 100,
+        top: phoneHeight > 670 ? 100 : 45
     },
     odometry: {
         color: 'white',
@@ -219,14 +224,14 @@ const styles = StyleSheet.create({
     },
     slider: {
         flex: 1,
-        top: 130,
+        top: phoneHeight > 670 ? 130 : 90,
         alignContent: 'center',
         justifyContent: 'center'
     },
     modes: {
         flex: 1,
         flexDirection: 'row',
-        top: 720,
+        top: phoneHeight > 670 ? 720 : 590,
         justifyContent: "space-between",
         width: phoneWidth * 0.9,
         position: "absolute",
