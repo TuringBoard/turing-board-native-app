@@ -6,20 +6,41 @@ import Backdrop from './backdrops/Backdrop';
 import { useNavigation } from '@react-navigation/native';
 import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
-import { useAuth } from '../store/auth-context';;
+import { useAuth } from '../store/auth-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const db = getFirestore();
 
 let phoneWidth = Dimensions.get('window').width;
 let phoneHeight = Dimensions.get('window').height;
 
 export default function Dashboard(props) {
-    const { uid, firstName } = useAuth()
+    const { uid } = useAuth()
+    const [firstName, setFirstName] = useState("Friend");
     const navigation = useNavigation();
     let [fontsLoaded] = useFonts({
         'Avenir-Book': require('../assets/fonts/AvenirBook.otf')
     });
     const onWarningHandler = () => {
-        alert('This feature is currently under construction. 🛠');
+        alert('This feature is currently under construction.');
     };
+
+    useEffect(() => {
+        let isMounted = true;
+        if (isMounted) {
+            async function getData() {
+                const q = query(collection(db, "users"), where("id", "==", uid));
+                const querySnapshot = await getDocs(q);
+                querySnapshot.forEach((doc) => {
+                    setFirstName(doc.data().firstName)
+                });
+            }
+            getData();
+        }
+        return () => {
+            isMounted = false;
+        }
+    }, []);
 
     if (!fontsLoaded) {
         return (<AppLoading />)

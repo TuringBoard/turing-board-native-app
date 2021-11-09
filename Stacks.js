@@ -16,7 +16,13 @@ export default function Stacks() {
     const [storageLogin, setStorageLogin] = useState();
 
     useEffect(async () => {
-        setStorageLogin(await AsyncStorage.getItem('isLoggedIn'))
+        let isMounted = true;
+        if (isMounted) {
+            setStorageLogin(await AsyncStorage.getItem('isLoggedIn'))
+        }
+        return () => {
+            isMounted = false;
+        }
     }, [])
 
     return (
