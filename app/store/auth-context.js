@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { auth } from '../APIs/firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, getAuth } from '@firebase/auth';
-import { getFirestore, doc, setDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AuthContext = React.createContext({
@@ -19,7 +19,6 @@ export const AuthContextProvider = ({ children }) => {
     const [signupSuccess, setSignupSuccess] = useState(false);
     const [uid, setUid] = useState("")
     const [isLoggedIn, setIsLoggedIn] = useState();
-    const [firstName, setFirstName] = useState("Friend");
 
     const signup = (email, password, firstName, lastName) => {
         createUserWithEmailAndPassword(auth, email, password)
@@ -72,25 +71,30 @@ export const AuthContextProvider = ({ children }) => {
         });
     }
 
-    useEffect(() => {
+    useEffect(async () => {
         auth.onAuthStateChanged(user => {
             user && setCurrentUser(user)
             user && setLoginSuccess(true);
             user && setUid(user.uid);
             user && AsyncStorage.setItem('uid', user.uid)
         })
+        let isMounted = true;
+        if (isMounted) {
+            setUid(await AsyncStorage.getItem("uid"))
+        }
+        return () => {
+            isMounted = false;
+        }
     }, [])
 
     useEffect(async () => {
-        async function getData() {
-            const q = query(collection(db, "users"), where("id", "==", await AsyncStorage.getItem('uid')));
-            const querySnapshot = await getDocs(q);
-            querySnapshot.forEach((doc) => {
-                setFirstName(doc.data().firstName)
-            });
+        let isMounted = true;
+        if (isMounted) {
+            setIsLoggedIn(await AsyncStorage.getItem('isLoggedIn') === 'true' ? true : false)
         }
-        getData();
-        setIsLoggedIn(await AsyncStorage.getItem('isLoggedIn') === 'true' ? true : false)
+        return () => {
+            isMounted = false;
+        }
     }, []);
 
     const value = {
@@ -102,7 +106,6 @@ export const AuthContextProvider = ({ children }) => {
         loginSuccess,
         signupSuccess,
         uid,
-        firstName
     }
 
     return (
