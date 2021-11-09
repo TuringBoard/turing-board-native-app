@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack'
 
@@ -8,10 +8,16 @@ import Throttle from './app/screens/Throttle';
 import Settings from './app/screens/Settings';
 
 import { useAuth } from './app/store/auth-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Stacks() {
     const Stack = createStackNavigator();
     const { isLoggedIn } = useAuth();
+    const [storageLogin, setStorageLogin] = useState();
+
+    useEffect(async () => {
+        setStorageLogin(await AsyncStorage.getItem('isLoggedIn'))
+    }, [isLoggedIn])
 
     return (
         <NavigationContainer>
@@ -20,7 +26,7 @@ export default function Stacks() {
                     headerShown: false
                 }}
             >
-                {!isLoggedIn ?
+                {!isLoggedIn && storageLogin !== 'true' ?
                     <>
                         <Stack.Screen name="Welcome Screen" component={WelcomeScreen} />
                     </>

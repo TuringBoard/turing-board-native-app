@@ -340,7 +340,7 @@ const styles = StyleSheet.create({
     },
     form: {
         width: phoneWidth * 0.8,
-        top: 120,
+        top: phoneHeight > 670 ? 120 : 30,
         left: (phoneWidth / 2) - (phoneWidth * 0.4),
         backgroundColor: 'rgba(256, 256, 256, 0.25)',
         borderRadius: 20,
