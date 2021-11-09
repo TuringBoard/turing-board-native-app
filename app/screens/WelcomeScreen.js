@@ -4,7 +4,10 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import Backdrop from './backdrops/Backdrop';
 import Login from './Login';
 import Signup from './Signup';
-import SVG from './SVG';
+
+import { useNavigation } from '@react-navigation/native';
+import { useAuth } from '../store/auth-context';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 let phoneWidth = Dimensions.get('window').width;
 let phoneHeight = Dimensions.get('window').height;
@@ -13,6 +16,8 @@ let phoneHeight = Dimensions.get('window').height;
 
 export default function WelcomeScreen(props) {
     const [authAction, setAuthAction] = useState("signup");
+    const { dummyLogin } = useAuth();
+    const navigate = useNavigation();
     const setActionHelper = () => {
         if (authAction === "login") {
             setAuthAction("signup")
@@ -20,31 +25,37 @@ export default function WelcomeScreen(props) {
             setAuthAction("login")
         }
     }
+
+    const nav = () => {
+        dummyLogin()
+    }
     return (
-        <ScrollView>
-            {/* <KeyboardAwareScrollView
-                behavior="padding"
-                resetScrollToCoords={{ x: 0, y: 0 }}
-                scrollEnabled={false}
-                style={{ width: phoneWidth, height: phoneHeight - 250 }}
-            > */}
+        <KeyboardAwareScrollView
+            behavior="padding"
+            resetScrollToCoords={{ x: 0, y: 0 }}
+            scrollEnabled={false}
+            style={{ width: phoneWidth, height: phoneHeight }}
+        >
             <Backdrop />
             <View style={styles.container}>
-                <Image source={require('../assets/logov2.png')} style={styles.logo} />
+                <TouchableWithoutFeedback
+                    onPress={nav}
+                    style={{
+                        borderTopColor: 'red',
+                        borderTopWidth: 2,
+                        borderBottomColor: 'red',
+                        borderBottomWidth: 2,
+                    }}
+                >
+                    <Image source={require('../assets/logov2.png')} style={styles.logo}
+                    />
+                </TouchableWithoutFeedback>
                 {authAction === "login"
                     ? <Login loginMode={setActionHelper} />
                     : <Signup loginMode={setActionHelper} />
                 }
             </View>
-            <Image source={require('../assets/skate.gif')} style={{
-                width: 185,
-                height: 185,
-                position: 'absolute',
-                bottom: 0,
-                right: 0
-            }} />
-            {/* </KeyboardAwareScrollView> */}
-        </ScrollView>
+        </KeyboardAwareScrollView>
     );
 }
 

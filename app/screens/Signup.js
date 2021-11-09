@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Alert, StyleSheet, Dimensions, Platform, View, Text, TextInput, Image } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useFonts } from 'expo-font';
@@ -89,7 +89,7 @@ export default function Signup({ loginMode }) {
                     behavior="padding"
                     resetScrollToCoords={{ x: 0, y: 0 }}
                     scrollEnabled={false}
-                    style={{ width: phoneWidth, height: phoneHeight - 250 }}
+                    style={{ width: phoneWidth, height: phoneHeight }}
                 >
                     <View style={styles.form}>
                         <View>

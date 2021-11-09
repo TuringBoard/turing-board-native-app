@@ -37,7 +37,9 @@ export const AuthContextProvider = ({ children }) => {
                 alert(error)
             });
     }
-
+    const dummyLogin = () => {
+        setIsLoggedIn(true)
+    }
     const login = (email, password) => {
         signInWithEmailAndPassword(auth, email, password).then(async () => {
             const myAuth = getAuth();
@@ -86,6 +88,7 @@ export const AuthContextProvider = ({ children }) => {
         signup,
         login,
         logout,
+        dummyLogin,
         loginSuccess,
         signupSuccess,
         uid
