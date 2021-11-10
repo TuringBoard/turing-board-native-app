@@ -6,29 +6,19 @@ import RNSpeedometer from 'react-native-speedometer';
 import CustomButtons from "../components/CustomButtons";
 import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getDatabase, ref, set } from 'firebase/database';
+import { useAuth } from "../store/auth-context";
 
+const db = getDatabase();
 let phoneWidth = Dimensions.get('window').width;
 let phoneHeight = Dimensions.get('window').height;
 export default function Throttle() {
     const [value, setValue] = useState(0);
     const [maxSpeed, setMaxSpeed] = useState(5);
+    const { uid } = useAuth();
     let [fontsLoaded] = useFonts({
         'Avenir-Book': require('../assets/fonts/AvenirBook.otf')
     });
-
-    // useEffect(() => {
-    //     AsyncStorage.getAllKeys().then((keyArray) => {
-    //         AsyncStorage.multiGet(keyArray).then((keyValArray) => {
-    //             let myStorage = {};
-    //             for (let keyVal of keyValArray) {
-    //                 myStorage[keyVal[0]] = keyVal[1]
-    //             }
-
-    //             console.log('CURRENT STORAGE: ', myStorage);
-    //         })
-    //     });
-    // }, [])
 
     const changeModeHandler = (maxSpeedVal) => {
         Alert.alert(
@@ -79,10 +69,16 @@ export default function Throttle() {
             activeBarColor: 'rgba(201, 20, 20, 0.8)'
         },
     ]
-
+    useEffect(() => {
+        set(ref(db, 'users/' + uid), {
+            speed: value
+        });
+    }, [value])
     const onThrottleHandler = (e) => {
+        console.log(e)
         setValue(e)
     }
+
     if (!fontsLoaded) {
         return (<AppLoading />)
     } else {
