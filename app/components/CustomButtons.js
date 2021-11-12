@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View, Image } from "react-native";
+import MapView, { Marker } from 'react-native-maps';
 
 let phoneWidth = Dimensions.get('window').width;
 export default function CustomButtons(props) {
@@ -7,17 +8,40 @@ export default function CustomButtons(props) {
     const [btnTextClass, setBtnTextClass] = useState()
     const [btnPic, setBtnPic] = useState()
     const [bgColor, setBgColor] = useState(``)
+    const [isSummon, setIsSummon] = useState(false)
+    const [btnTextContainerClass, setBtnTextContainerClass] = useState()
+    const [mapRegion, setmapRegion] = useState({
+        latitude: 32.730588,
+        longitude: -97.113983,
+        latitudeDelta: 0.004,
+        longitudeDelta: 0.004,
+    });
+
+    useEffect(() => {
+        if (props.coords) {
+            setmapRegion({
+                latitude: props.coords.coords.latitude,
+                longitude: props.coords.coords.longitude,
+                latitudeDelta: 0.004,
+                longitudeDelta: 0.004,
+            })
+        }
+    }, [props.coords])
 
     useEffect(() => {
         if (props.type === "big") {
             setBtnClass(styles.bigBtn)
             setBtnTextClass(styles.bigBtnText)
+            setBtnTextContainerClass(styles.textContainer)
         } else if (props.type === "settings") {
             setBtnClass(styles.settingsBtn);
             setBtnTextClass(styles.settingsBtnText);
         } else if (props.type === "small") {
             setBtnClass(styles.smallBtn);
             setBtnTextClass(styles.smallBtnText);
+        }
+        if (props.title === 'SUMMON') {
+            setIsSummon(true)
         }
         if (props.name === "parking") {
             setBtnPic(styles.parking)
@@ -33,11 +57,52 @@ export default function CustomButtons(props) {
         }
     }, [props])
     return (
-        <TouchableOpacity style={[btnClass, { backgroundColor: bgColor }]} onPress={props.onPress}>
-            <Text style={btnTextClass}>{props.title}</Text>
-            <View style={btnPic}>{props.children}</View>
-        </TouchableOpacity>
-    );
+        <View>
+            {
+                isSummon
+                    ?
+                    <TouchableOpacity style={[btnClass, { backgroundColor: bgColor }]} onPress={props.onPress}>
+                        <View style={btnTextContainerClass}>
+                            <Text style={btnTextClass}>{props.title}</Text>
+                        </View>
+                        <MapView
+                            style={{
+                                width: phoneWidth * 0.35 - 2,
+                                height: phoneWidth * 0.35 - 2,
+                                position: 'absolute',
+                                borderRadius: 10,
+                                zIndex: -1,
+                            }}
+                            region={mapRegion}
+                            userInterfaceStyle={'dark'}
+                            showUserLocation={true}
+                            showBuildings={true}
+                            scrollEnabled={false}
+                            zoomEnabled={false}
+                            onPress={props.onPress}
+                            followsUserLocation={true}
+                        >
+                            <Marker
+                                coordinate={{ latitude: mapRegion.latitude, longitude: mapRegion.longitude }}
+                            >
+                                <Image
+                                    source={require('../assets/dot.png')}
+                                    resizeMode="contain"
+                                    style={{ width: 40, height: 40 }}
+                                />
+                            </Marker>
+                        </MapView>
+                    </TouchableOpacity >
+                    :
+                    <TouchableOpacity style={[btnClass, { backgroundColor: bgColor }]} onPress={props.onPress} >
+                        <View style={btnTextContainerClass}>
+                            <Text style={btnTextClass}>{props.title}</Text>
+                        </View>
+                        <View style={btnPic}>{props.children}</View>
+                    </TouchableOpacity >
+            }
+        </View>
+    )
 }
 
 const styles = StyleSheet.create({
@@ -108,4 +173,15 @@ const styles = StyleSheet.create({
         fontSize: 16,
         textAlign: 'center'
     },
+    textContainer: {
+        backgroundColor: 'rgba(0,0,0,0.4)',
+        position: 'absolute',
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: phoneWidth * 0.35 - 2,
+        height: 40,
+        borderTopEndRadius: 10,
+        borderTopLeftRadius: 10
+    }
 })
