@@ -75,7 +75,6 @@ export default function Throttle() {
         });
     }, [value])
     const onThrottleHandler = (e) => {
-        console.log(e)
         setValue(e)
     }
 

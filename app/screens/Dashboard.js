@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Dimensions, Image, StyleSheet, View, ScrollView, Text, Platform } from 'react-native';
+import { Dimensions, Image, StyleSheet, View, Text, Platform } from 'react-native';
 import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
 import CustomButtons from '../components/CustomButtons';
 import Backdrop from './backdrops/Backdrop';
@@ -7,7 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
 import { useAuth } from '../store/auth-context';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Location from 'expo-location';
 
 const db = getFirestore();
 
@@ -18,6 +18,15 @@ export default function Dashboard(props) {
     const { uid } = useAuth()
     const [firstName, setFirstName] = useState("Friend");
     const navigation = useNavigation();
+    const [location, setLocation] = useState(null);
+
+    const [mapRegion, setmapRegion] = useState({
+        latitude: 32.730588,
+        longitude: -97.113983,
+        latitudeDelta: 0.002,
+        longitudeDelta: 0.002,
+    });
+
     let [fontsLoaded] = useFonts({
         'Avenir-Book': require('../assets/fonts/AvenirBook.otf')
     });
@@ -36,6 +45,34 @@ export default function Dashboard(props) {
                 });
             }
             getData();
+        }
+        (async () => {
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                console.log('Permission to access location was denied');
+                return;
+            }
+
+            let location = await Location.getCurrentPositionAsync({});
+            setLocation(location);
+        })();
+        return () => {
+            isMounted = false;
+        }
+    }, []);
+
+    useEffect(() => {
+        let isMounted = true;
+        if (isMounted) {
+            (async () => {
+                let { status } = await Location.requestForegroundPermissionsAsync();
+                if (status !== 'granted') {
+                    console.log('Permission to access location was denied');
+                    return;
+                }
+                let location = await Location.getCurrentPositionAsync({});
+                setLocation(location);
+            })();
         }
         return () => {
             isMounted = false;
@@ -59,8 +96,7 @@ export default function Dashboard(props) {
                                     <CustomButtons title="PARK" type="big" name="parking" onPress={onWarningHandler}>
                                         <Image source={require('../assets/park.png')} style={styles.pic} />
                                     </CustomButtons>
-                                    <CustomButtons title="SUMMON" type="big" onPress={onWarningHandler}>
-                                        <Image source={require('../assets/bell2.png')} style={styles.pic} />
+                                    <CustomButtons title="SUMMON" type="big" onPress={onWarningHandler} coords={location}>
                                     </CustomButtons>
                                 </View>
                                 <View style={styles.row}>
@@ -68,7 +104,7 @@ export default function Dashboard(props) {
                                         <Image source={require('../assets/duck.png')} style={styles.pic} />
                                     </CustomButtons>
                                     <CustomButtons title="RIDE" type="big" onPress={() => navigation.navigate('Throttle')}>
-                                        <Image source={require('../assets/skateboard.png')} style={styles.pic} />
+                                        <Image source={require('../assets/skateboard2.png')} style={styles.pic} />
                                     </CustomButtons>
                                 </View>
                                 <View style={styles.row}>
@@ -159,7 +195,14 @@ const styles = StyleSheet.create({
     pic: {
         width: 55,
         height: 55,
-        top: 15,
+        top: 45,
         left: 25
+    },
+    skatePic: {
+        width: 85,
+        height: 85,
+        top: 29,
+        left: 29,
+        borderBottomRightRadius: 10
     }
 })
