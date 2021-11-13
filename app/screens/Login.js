@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Dimensions, Platform, View, Text, TextInput, Alert } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useFonts } from 'expo-font';
@@ -152,13 +152,12 @@ export default function Login({ loginMode }) {
                             </TouchableOpacity>
                         </View>
                         <View style={android.footerContainer}>
-                            <TouchableOpacity><Text style={android.footerItems}>Forgot Password?</Text></TouchableOpacity><Text style={{ color: 'white' }}> or </Text><TouchableOpacity><Text style={android.footerItems}>Sign Up!</Text></TouchableOpacity>
+                            <TouchableOpacity onPress={() => { Alert.alert("Just contact Sahaj", "Writing code for this isn't worth the time, he'll manually email you the password reset link.") }}><Text style={android.footerItems}>Forgot Password?</Text></TouchableOpacity><Text style={{ color: 'white' }}> or </Text><TouchableOpacity onPress={loginMode}><Text style={android.footerItems}>Sign Up!</Text></TouchableOpacity>
                         </View>
                     </View>
-                </View>
+                </View >
             )
         }
-
     }
 }
 
@@ -296,7 +295,7 @@ const styles = StyleSheet.create({
     },
     form: {
         width: phoneWidth * 0.8,
-        top: phoneHeight > 670 ? 120 : 40,
+        top: phoneHeight > 680 ? 120 : 40,
         left: (phoneWidth / 2) - (phoneWidth * 0.4),
         backgroundColor: 'rgba(256, 256, 256, 0.25)',
         borderRadius: 20,

@@ -1,13 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Dimensions, Text, View, Image, TextInput, Button, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Dimensions, View, Image } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Backdrop from './backdrops/Backdrop';
 import Login from './Login';
 import Signup from './Signup';
-
-import { useNavigation } from '@react-navigation/native';
-import { useAuth } from '../store/auth-context';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 let phoneWidth = Dimensions.get('window').width;
 let phoneHeight = Dimensions.get('window').height;
@@ -16,7 +12,6 @@ let phoneHeight = Dimensions.get('window').height;
 
 export default function WelcomeScreen(props) {
     const [authAction, setAuthAction] = useState("signup");
-    const navigate = useNavigation();
     const setActionHelper = () => {
         if (authAction === "login") {
             setAuthAction("signup")
@@ -53,6 +48,6 @@ const styles = StyleSheet.create({
         width: 150,
         height: 150,
         left: (phoneWidth / 2) - 75,
-        top: phoneHeight > 670 ? 100 : 30,
+        top: phoneHeight > 680 ? 100 : 30,
     },
 })

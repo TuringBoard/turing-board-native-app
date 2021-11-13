@@ -165,24 +165,48 @@ export default function Signup({ loginMode }) {
         } else if (Platform.OS === 'android') {
             return (
                 <View
-                    style={{ width: phoneWidth, height: phoneHeight - 250 }}
+                    // behavior="padding"
+                    // resetScrollToCoords={{ x: 0, y: 0 }}
+                    // scrollEnabled={false}
+                    style={{ width: phoneWidth, height: phoneHeight }}
                 >
                     <View style={android.form}>
                         <View>
-                            <Text style={android.header}>SIGN IN</Text>
+                            <Text style={styles.header}>Create new account</Text>
                         </View>
                         <View style={android.formItems}>
                             <TextInput
                                 style={isError ? styles.inputError : styles.input}
+                                value={values.firstName}
+                                autoCorrect={false}
+                                placeholder="First Name"
+                                onChangeText={text => onChangeTextHandler(text, "firstName")}
+                            ></TextInput>
+                            <TextInput
+                                style={isError ? styles.inputError : styles.input}
+                                value={values.lastName}
+                                autoCorrect={false}
+                                keyboardType='email-address'
+                                placeholder="Last Name"
+                                onChangeText={text => onChangeTextHandler(text, "lastName")}
+                            ></TextInput>
+                            <View style={{ marginTop: 15 }}>
+                            </View>
+                            <TextInput
+                                style={isError ? styles.inputError : styles.input}
+                                value={values.email}
                                 autoCapitalize='none'
                                 autoCorrect={false}
                                 autoComplete='email'
                                 keyboardType='email-address'
-                                placeholder="E-mail address"
+                                placeholder="E-mail Address"
                                 onChangeText={text => onChangeTextHandler(text, "email")}
                             ></TextInput>
+                            <View style={{ marginTop: 15 }}>
+                            </View>
                             <TextInput
                                 style={isError ? styles.inputError : styles.input}
+                                value={values.password}
                                 autoCapitalize='none'
                                 autoCorrect={false}
                                 autoComplete='password'
@@ -190,16 +214,32 @@ export default function Signup({ loginMode }) {
                                 placeholder="Password"
                                 onChangeText={text => onChangeTextHandler(text, "password")}
                             ></TextInput>
-
-                            <TouchableOpacity style={android.submit} onPress={onSubmitHandler}>
-                                <Text style={android.submitText}>LOG IN</Text>
+                            <TextInput
+                                style={isError ? styles.inputError : styles.input}
+                                value={values.confirmPassword}
+                                autoCapitalize='none'
+                                autoCorrect={false}
+                                autoComplete='password'
+                                secureTextEntry={true}
+                                placeholder="Confirm Password"
+                                onChangeText={text => onChangeTextHandler(text, "confirmPassword")}
+                            ></TextInput>
+                            <TouchableOpacity style={styles.submit} onPress={onSubmitHandler}>
+                                <Text style={styles.submitText}>SIGN UP</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={android.footerContainer}>
-                            <TouchableOpacity><Text style={android.footerItems}>Forgot Password?</Text></TouchableOpacity><Text style={{ color: 'white' }}> or </Text><TouchableOpacity><Text style={android.footerItems}>Sign Up!</Text></TouchableOpacity>
+                            <Text style={{ color: 'white' }}>
+                                <TouchableOpacity onPress={loginMode}><Text style={styles.footerItems}>Already have an account?</Text></TouchableOpacity>
+                            </Text>
                         </View>
                     </View>
-                </View>
+                    {isError &&
+                        <View style={styles.errorContainer}>
+                            <Text style={styles.error}>Invalid email or password, please try again.</Text>
+                        </View>
+                    }
+                </View >
             )
         }
 
@@ -217,18 +257,17 @@ const android = StyleSheet.create({
     },
     form: {
         width: phoneWidth * 0.8,
-        top: 120,
+        top: phoneHeight > 680 ? 120 : 30,
         left: (phoneWidth / 2) - (phoneWidth * 0.4),
         backgroundColor: 'rgba(256, 256, 256, 0.25)',
         borderRadius: 20,
-        height: 320,
+        height: phoneHeight > 680 ? 500 : 490,
     },
     formItems: {
         flex: 1,
-        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        top: -15
+        top: -35
     },
     submit: {
         marginTop: 10,
@@ -257,16 +296,15 @@ const android = StyleSheet.create({
         flexDirection: 'row',
         fontFamily: 'Avenir-Book',
         marginBottom: 20,
-        paddingTop: 20,
         position: 'absolute',
-        top: 255,
-        left: (phoneWidth / 2) - 145
+        top: 445,
+        left: (phoneWidth / 2) - 115,
     },
     footerItems: {
         color: 'white',
         textDecorationLine: 'underline',
         fontFamily: 'Avenir-Book',
-        fontSize: 16
+        fontSize: 16,
     },
 });
 
@@ -340,7 +378,7 @@ const styles = StyleSheet.create({
     },
     form: {
         width: phoneWidth * 0.8,
-        top: phoneHeight > 670 ? 120 : 30,
+        top: phoneHeight > 680 ? 120 : 30,
         left: (phoneWidth / 2) - (phoneWidth * 0.4),
         backgroundColor: 'rgba(256, 256, 256, 0.25)',
         borderRadius: 20,

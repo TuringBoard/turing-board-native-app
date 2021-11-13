@@ -61,7 +61,7 @@ export default function CustomButtons(props) {
             {
                 isSummon
                     ?
-                    <TouchableOpacity style={[btnClass, { backgroundColor: bgColor }]} onPress={props.onPress}>
+                    <TouchableOpacity style={[btnClass, { backgroundColor: bgColor, overflow: "hidden" }]} onPress={props.onPress}>
                         <View style={btnTextContainerClass}>
                             <Text style={btnTextClass}>{props.title}</Text>
                         </View>

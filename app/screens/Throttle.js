@@ -156,12 +156,12 @@ export default function Throttle() {
                                 labelStyle={{ display: 'none' }}
                             />
                         </View>
-                        <View style={styles.odometerView}>
+                        <View style={android.odometerView}>
                             <Text style={styles.odometry}>{value < 0 ? "0.00" : value.toFixed(2)} mph</Text>
                             <Text style={{ color: 'white', textAlign: 'center', fontFamily: 'Avenir-Book' }}>Odometer</Text>
                             <Text style={{ right: 2, color: 'white', textAlign: 'center', fontFamily: 'Avenir-Book' }}>TRIP: 0.00 mi</Text>
                         </View>
-                        <View style={styles.slider}>
+                        <View style={android.slider}>
                             <MultiSlider
                                 containerStyle={android.slider}
                                 trackStyle={{ height: 150 }}
@@ -183,13 +183,13 @@ export default function Throttle() {
                                 onValuesChangeFinish={() => setValue(0)}
                             />
                         </View>
-                        <View style={styles.modes}>
+                        <View style={android.modes}>
                             <CustomButtons title={`CRUISE\n0 - 5 mph`} type="small" name="cruise" onPress={() => changeModeHandler(5)} />
                             <CustomButtons title={`FAST\n0 - 12 mph`} type="small" name="fast" onPress={() => changeModeHandler(12)} />
                             <CustomButtons title={`LUDICROUS\n0 - ⚡️ mph`} type="small" name="ludicrous" onPress={() => changeModeHandler(20)} />
                         </View>
                         <View>
-                            <Text style={{ fontFamily: 'Avenir-Book', color: 'white', fontSize: 18, position: "absolute", top: 405, left: -25 }}>Mode</Text>
+                            <Text style={{ fontFamily: 'Avenir-Book', color: 'white', fontSize: 18, position: "absolute", top: phoneHeight > 680 ? 405 : 305, left: -25 }}>Mode</Text>
                         </View>
                     </View>
                 </View>
@@ -237,12 +237,25 @@ const styles = StyleSheet.create({
 const android = StyleSheet.create({
     speedometer: {
         width: phoneWidth,
-        top: 100,
+        position: "relative",
+        top: phoneHeight > 680 ? 100 : 40,
     },
     slider: {
         flex: 1,
-        top: 130,
+        top: phoneHeight > 680 ? 130 : 90,
         alignContent: 'center',
         justifyContent: 'center',
+    },
+    odometerView: {
+        top: phoneHeight > 680 ? 100 : 45
+    },
+    modes: {
+        flex: 1,
+        flexDirection: 'row',
+        top: phoneHeight > 680 ? 720 : 590,
+        justifyContent: "space-between",
+        width: phoneWidth * 0.9,
+        position: "absolute",
+        left: -20
     }
 });
