@@ -35,6 +35,8 @@ export default function Dashboard(props) {
     };
 
     useEffect(() => {
+        // Kendall's phone: 678px by 360px
+        console.log(phoneHeight, phoneWidth)
         let isMounted = true;
         if (isMounted) {
             async function getData() {
@@ -122,15 +124,14 @@ export default function Dashboard(props) {
                     <View style={styles.container}>
                         <Image source={require('../assets/logov2.png')} style={styles.logo} />
                         <View style={styles.messageContainer}>
-                            <Text style={[styles.message, { fontSize: 25 }]}>Hello, Sahaj!</Text>
+                            <Text style={[styles.message, { fontSize: 25 }]}>Hello, {firstName}!</Text>
                             <Text style={styles.message}>What would you like to do today?</Text>
                             <View style={styles.buttons}>
                                 <View style={styles.row}>
                                     <CustomButtons title="PARK" type="big" name="parking" onPress={onWarningHandler}>
                                         <Image source={require('../assets/park.png')} style={android.pic} />
                                     </CustomButtons>
-                                    <CustomButtons title="SUMMON" type="big" onPress={onWarningHandler}>
-                                        <Image source={require('../assets/bell2.png')} style={android.pic} />
+                                    <CustomButtons title="SUMMON" type="big" onPress={onWarningHandler} coords={location}>
                                     </CustomButtons>
                                 </View>
                                 <View style={styles.row}>
@@ -142,7 +143,7 @@ export default function Dashboard(props) {
                                     </CustomButtons>
                                 </View>
                                 <View style={styles.row}>
-                                    <CustomButtons title="Manage Settings ⚙️" type="settings" />
+                                    <CustomButtons title="Manage Settings ⚙️" type="settings" onPress={() => navigation.navigate('Settings')} />
                                 </View>
                             </View>
                         </View>
@@ -157,8 +158,8 @@ const android = StyleSheet.create({
     pic: {
         width: 55,
         height: 55,
-        top: 15,
-        left: 35
+        top: phoneHeight > 680 ? 45 : 40,
+        left: phoneHeight > 680 ? 35 : 20
     }
 })
 
@@ -170,12 +171,12 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
         left: (phoneWidth / 2) - 50,
-        top: phoneHeight > 670 ? 70 : 30
+        top: phoneHeight > 680 ? 70 : 30
     },
     messageContainer: {
         position: 'absolute',
         width: phoneWidth,
-        top: phoneHeight > 670 ? 190 : 140
+        top: phoneHeight > 680 ? 190 : 140
     },
     message: {
         color: 'white',
