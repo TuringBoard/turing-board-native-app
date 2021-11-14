@@ -9,6 +9,7 @@ import Settings from './app/screens/Settings';
 
 import { useAuth } from './app/store/auth-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Test from './app/screens/Test';
 
 export default function Stacks() {
     const Stack = createStackNavigator();
@@ -39,6 +40,7 @@ export default function Stacks() {
                     :
                     <>
                         <Stack.Screen name="Dashboard" component={Dashboard} />
+                        <Stack.Screen name="Test" component={Test} />
                         <Stack.Screen name="Throttle" component={Throttle} />
                         <Stack.Screen name="Settings" component={Settings} />
                     </>
