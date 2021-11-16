@@ -16,6 +16,7 @@ export default function Throttle() {
     const [value, setValue] = useState(0);
     const [maxSpeed, setMaxSpeed] = useState(5);
     const { uid } = useAuth();
+    let date = new Date()
     let [fontsLoaded] = useFonts({
         'Avenir-Book': require('../assets/fonts/AvenirBook.otf')
     });
@@ -69,12 +70,16 @@ export default function Throttle() {
             activeBarColor: 'rgba(201, 20, 20, 0.8)'
         },
     ]
-    useEffect(() => {
-        set(ref(db, 'users/' + uid), {
-            speed: value
-        });
-    }, [value])
+    // useEffect(() => {
+    //     set(ref(db, 'users/' + uid), {
+    //         speed: value
+    //     });
+    // }, [value])
     const onThrottleHandler = (e) => {
+        set(ref(db, 'users/' + uid), {
+            speed: e
+        });
+        console.log("{'speed': " + e + "} " + date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + "." + date.getMilliseconds())
         setValue(e)
     }
 
