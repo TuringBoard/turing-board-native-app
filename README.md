@@ -54,3 +54,27 @@ to:
 ```
 var asyncStorage = require('@react-native-async-storage/async-storage')
 ```
+
+If you receive the error that reads:
+
+```
+TypeError: undefined is not an object (evaluating '_react.PropTypes.number')
+```
+
+This is because the react-native-circular-slider dependecy is calling `PropTypes` from the `react` package. You need install `prop-types` by running:
+
+```
+npm install prop-types --save
+```
+
+and then change the import statements in `node_modules/react-native-circular-slider/src/CircularSlider.js` and `node_modules/react-native-circular-slider/src/ClockFace.js` from:
+
+```
+import {PropTypes} from 'react';
+```
+
+to:
+
+```
+import PropTypes from 'prop-types';
+```
