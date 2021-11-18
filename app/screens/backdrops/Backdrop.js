@@ -23,6 +23,6 @@ const styles = StyleSheet.create({
     bg: {
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height,
-        zIndex: -1
+        zIndex: -10
     }
 })

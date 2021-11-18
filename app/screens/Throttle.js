@@ -79,7 +79,7 @@ export default function Throttle() {
         set(ref(db, 'users/' + uid), {
             speed: e
         });
-        console.log("{'speed': " + e + "} " + date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + "." + date.getMilliseconds())
+        // console.log("{'speed': " + e + "} " + date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + "." + date.getMilliseconds())
         setValue(e)
     }
 
