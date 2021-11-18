@@ -1,17 +1,18 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dimensions, StyleSheet, View, Text, SafeAreaView } from 'react-native';
 import Backdrop from './backdrops/Backdrop';
 import CircularSlider from 'react-native-circular-slider';
 import { useFonts } from 'expo-font';
 import Svg, { Circle, Path } from 'react-native-svg';
 import { PanGestureHandler, PanGestureHandlerEvent } from 'react-native-gesture-handler';
-import Animated, { useAnimatedGestureHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
+import Animated, { useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, runOnJS } from 'react-native-reanimated';
 
 let phoneWidth = Dimensions.get('window').width;
 let phoneHeight = Dimensions.get('window').height;
 
 export default function Test() {
     const [sliderVal, setSliderVal] = useState(90)
+    const [speed, setSpeed] = useState(0)
     const [angles, setAngles] = useState({
         startAngle: 300,
         angleLength: 1
@@ -30,29 +31,49 @@ export default function Test() {
     }
 
 
-    let startingX = phoneWidth
+    let startingX = phoneWidth - 50
     let startingY = 300
-    let rx = 500
-    let ry = 500
-    let xEnd = 100
-    let yEnd = phoneHeight - 200
+    let rx = 300
+    let ry = 300
+    let xEnd = phoneWidth - rx - 50
+    let yEnd = 300 + ry
 
     const translateX = useSharedValue(0)
     const translateY = useSharedValue(0)
+    const theta = useSharedValue(0)
+
+    const speedHandler = (displacement) => {
+        const percentage = displacement / rx
+        setSpeed(percentage * 20)
+    }
+
     const panGestureEvent = useAnimatedGestureHandler({
         onStart: (event, context) => {
             context.translateX = translateX.value
             context.translateY = translateY.value
         },
         onActive: (event, context) => {
-            const theta = Math.acos((rx - event.translationX + context.translateX) / rx)
-            translateX.value = event.translationX + context.translateX;
-            if (isNaN(theta)) {
-                translateY.value = 0 + context.translateY;
+            theta.value = Math.acos((rx - event.translationX - context.translateX) / rx)
+            if (event.translationX + context.translateX < 0) {
+                translateX.value = 0;
             } else {
-                translateY.value = -(410 * Math.sin(theta)) + context.translateY;
+                if ((event.translationX + context.translateX) < rx) {
+                    translateX.value = event.translationX + context.translateX;
+                } else {
+                    translateX.value = rx;
+                }
+            }
+            if (isNaN(theta.value)) {
+                translateY.value = 0;
+            } else {
+                if ((-(rx * Math.sin(theta.value))) > -rx) {
+                    translateY.value = -(rx * Math.sin(theta.value));
+                } else {
+                    translateY.value = -ry
+                }
             }
             console.log(translateX.value, ", ", translateY.value)
+            runOnJS(speedHandler)(translateX.value)
         },
         onEnd: (event) => { },
     })
@@ -73,7 +94,7 @@ export default function Test() {
     return (
         <View>
             <Backdrop />
-            {/* <Text style={{
+            <Text style={{
                 color: 'white',
                 fontSize: 50,
                 position: 'absolute',
@@ -81,7 +102,7 @@ export default function Test() {
                 textAlign: 'center',
                 left: 100,
                 fontFamily: 'Avenir-Book'
-            }}>{(angles.angleLength * 10).toFixed(2)} mph</Text> */}
+            }}>{speed.toFixed(2)} mph</Text>
             <SafeAreaView style={{
                 flex: 1,
                 justifyContent: "center",
@@ -95,7 +116,6 @@ export default function Test() {
                          A ${rx} ${ry} 0 0 0 ${xEnd} ${yEnd}
                         `}
                         stroke="white" fill="none" strokeWidth={2} />
-
                 </Svg>
                 <PanGestureHandler
                     onGestureEvent={panGestureEvent}
