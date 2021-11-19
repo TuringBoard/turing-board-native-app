@@ -135,7 +135,7 @@ export default function Dashboard(props) {
                                     </CustomButtons>
                                 </View>
                                 <View style={styles.row}>
-                                    <CustomButtons title="FOLLOW" type="big" onPress={onWarningHandler}>
+                                    <CustomButtons title="FOLLOW" type="big" onPress={() => navigation.navigate('Test')}>
                                         <Image source={require('../assets/duck.png')} style={android.pic} />
                                     </CustomButtons>
                                     <CustomButtons title="RIDE" type="big" onPress={() => navigation.navigate('Throttle')}>
