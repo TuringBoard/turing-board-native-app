@@ -3,7 +3,7 @@ import { Dimensions, StyleSheet, View, Text, SafeAreaView } from 'react-native';
 import Backdrop from './backdrops/Backdrop';
 import CircularSlider from 'react-native-circular-slider';
 import { useFonts } from 'expo-font';
-import Svg, { Circle, Path } from 'react-native-svg';
+import Svg, { Circle, Defs, LinearGradient, Path, Stop } from 'react-native-svg';
 import { PanGestureHandler, PanGestureHandlerEvent } from 'react-native-gesture-handler';
 import Animated, { useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, runOnJS } from 'react-native-reanimated';
 
@@ -30,12 +30,12 @@ export default function Test() {
         })
     }
 
-
-    let startingX = phoneWidth - 50
+    let offsetRight = -20
+    let startingX = phoneWidth - offsetRight
     let startingY = 300
     let rx = 300
     let ry = 300
-    let xEnd = phoneWidth - rx - 50
+    let xEnd = phoneWidth - rx - offsetRight
     let yEnd = 300 + ry
 
     const translateX = useSharedValue(0)
@@ -53,26 +53,31 @@ export default function Test() {
             context.translateY = translateY.value
         },
         onActive: (event, context) => {
-            theta.value = Math.acos((rx - event.translationX - context.translateX) / rx)
+            theta.value = Math.atan((-event.translationY - context.translateY) / (rx - event.translationX - context.translateX))
+            if (theta.value * 180 / Math.PI < 0 && theta.value * 180 / Math.PI > -50) {
+                theta.value = 0
+            }
+            if (theta.value * 180 / Math.PI < -50 || theta.value * 180 / Math.PI > 88) {
+                theta.value = 89 * Math.PI / 180
+            }
+            // console.log(theta.value * 180 / Math.PI)
             if (event.translationX + context.translateX < 0) {
                 translateX.value = 0;
+            } else if (event.translationX + context.translateX > rx) {
+                translateY.value = rx;
             } else {
-                if ((event.translationX + context.translateX) < rx) {
-                    translateX.value = event.translationX + context.translateX;
+                if ((rx - (rx * Math.cos(theta.value))) < rx) {
+                    translateX.value = rx - (rx * Math.cos(theta.value))
                 } else {
                     translateX.value = rx;
                 }
             }
-            if (isNaN(theta.value)) {
-                translateY.value = 0;
+            if ((-(rx * Math.sin(theta.value))) < 0) {
+                translateY.value = -(rx * Math.sin(theta.value));
             } else {
-                if ((-(rx * Math.sin(theta.value))) > -rx) {
-                    translateY.value = -(rx * Math.sin(theta.value));
-                } else {
-                    translateY.value = -ry
-                }
+                translateY.value = 0
             }
-            console.log(translateX.value, ", ", translateY.value)
+
             runOnJS(speedHandler)(translateX.value)
         },
         onEnd: (event) => { },
@@ -100,9 +105,9 @@ export default function Test() {
                 position: 'absolute',
                 top: 200,
                 textAlign: 'center',
-                left: 100,
+                left: 75,
                 fontFamily: 'Avenir-Book'
-            }}>{speed.toFixed(2)} mph</Text>
+            }}>{speed.toFixed(2).length === 4 ? `0${speed.toFixed(2)}` : speed.toFixed(2)} mph</Text>
             <SafeAreaView style={{
                 flex: 1,
                 justifyContent: "center",
@@ -110,12 +115,18 @@ export default function Test() {
                 position: 'absolute',
             }}>
                 <Svg height={phoneHeight} width={phoneWidth}>
-                    <Circle cx={startingX} cy={startingY} r="10" fill="red" />
-                    <Circle cx={xEnd} cy={yEnd} r="10" fill="green" />
+                    {/* <Circle cx={startingX} cy={startingY} r="10" fill="red" />
+                    <Circle cx={xEnd} cy={yEnd} r="10" fill="green" /> */}
+                    <Defs>
+                        <LinearGradient id="strokePath" x1="0" y1="0" x2="1" y2="0">
+                            <Stop offset="0" stopColor="#2fa862" stopOpacity="1" />
+                            <Stop offset="1" stopColor="white" stopOpacity="0.4" />
+                        </LinearGradient>
+                    </Defs>
                     <Path d={`M ${startingX} ${startingY}
                          A ${rx} ${ry} 0 0 0 ${xEnd} ${yEnd}
                         `}
-                        stroke="white" fill="none" strokeWidth={2} />
+                        stroke="url(#strokePath)" fill="none" strokeWidth={80} />
                 </Svg>
                 <PanGestureHandler
                     onGestureEvent={panGestureEvent}
@@ -123,12 +134,12 @@ export default function Test() {
                     <Animated.View
                         style={[{
                             position: 'absolute',
-                            top: yEnd + 32,
-                            left: xEnd - 15,
-                            height: 30,
-                            width: 30,
-                            borderRadius: "50%",
-                            backgroundColor: 'rgba(255,255,255,0.6)',
+                            top: yEnd + 2,
+                            left: xEnd - 45,
+                            height: 90,
+                            width: 90,
+                            borderRadius: 50,
+                            backgroundColor: 'rgba(255,255,255,0.7)',
                             zIndex: 2
                         }, rStyle]
                         }
@@ -150,7 +161,7 @@ export default function Test() {
                     onUpdate={onThrottleHandler}
                     segments={100}
                     strokeWidth={80}
-                    radius={145}
+                    radius={350}
                     gradientColorFrom="green"
                     gradientColorTo="red"
                     clockFaceColor="#9d9d9d"
