@@ -1,266 +1,451 @@
-import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Text, Dimensions, Alert, Platform, ScrollView } from 'react-native';
-import Backdrop from "./backdrops/Backdrop";
-import MultiSlider from '@ptomasroos/react-native-multi-slider';
-import RNSpeedometer from 'react-native-speedometer';
-import CustomButtons from "../components/CustomButtons";
-import AppLoading from 'expo-app-loading';
+import React, { useState, useEffect } from 'react';
+import { Dimensions, StyleSheet, View, Text, SafeAreaView, TouchableOpacity, Image } from 'react-native';
+import Backdrop from './backdrops/Backdrop';
+import CircularSlider from 'react-native-circular-slider';
 import { useFonts } from 'expo-font';
-import { getDatabase, ref, set } from 'firebase/database';
-import { useAuth } from "../store/auth-context";
+import Svg, { Line, Text as SvgText, TextPath, Circle, G, Defs, RadialGradient, Path, Stop, TSpan } from 'react-native-svg';
+import { PanGestureHandler, PanGestureHandlerEvent } from 'react-native-gesture-handler';
+import Animated, { useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, runOnJS, max } from 'react-native-reanimated';
 
-const db = getDatabase();
 let phoneWidth = Dimensions.get('window').width;
 let phoneHeight = Dimensions.get('window').height;
+
 export default function Throttle() {
-    const [value, setValue] = useState(0);
-    const [maxSpeed, setMaxSpeed] = useState(5);
-    const { uid } = useAuth();
-    let date = new Date()
+    const [sliderVal, setSliderVal] = useState(90)
+    const [speed, setSpeed] = useState(0)
+    const [mode, setMode] = useState("cruise")
+    const [angles, setAngles] = useState({
+        startAngle: 300,
+        angleLength: 1
+    })
+    const [value, setValue] = useState(0)
     let [fontsLoaded] = useFonts({
-        'Avenir-Book': require('../assets/fonts/AvenirBook.otf')
+        'Avenir-Book': require('../assets/fonts/AvenirBook.otf'),
     });
 
-    const changeModeHandler = (maxSpeedVal) => {
-        Alert.alert(
-            "Confirm Speed Mode",
-            'Are you sure you want to change max speed to ' + maxSpeedVal + ' mph?',
-            [
-                {
-                    text: "Cancel",
-                    onPress: () => { },
-                    style: "cancel"
-                },
-                {
-                    text: "Confirm",
-                    onPress: () => { setMaxSpeed(maxSpeedVal) },
-                }
-            ]
-        )
-    }
-    const labels = [
-        {
-            name: '',
-            labelColor: 'rgba(256,256,256,0)',
-            activeBarColor: 'rgba(29, 112, 68, 0.8)'
-        },
-        {
-            name: ' ',
-            labelColor: 'rgba(256,256,256,0)',
-            activeBarColor: 'rgba(117, 173, 111, 0.8)'
-        },
-        {
-            name: '  ',
-            labelColor: 'rgba(256,256,256,0)',
-            activeBarColor: 'rgba(255, 190, 0, 0.8)'
-        },
-        {
-            name: '   ',
-            labelColor: 'rgba(256,256,256,0)',
-            activeBarColor: 'rgba(255, 126, 1, 0.8)'
-        },
-        {
-            name: '    ',
-            labelColor: 'rgba(256,256,256,0)',
-            activeBarColor: 'rgba(227, 7, 29, 0.8)'
-        },
-        {
-            name: '     ',
-            labelColor: 'rgba(256,256,256,0)',
-            activeBarColor: 'rgba(201, 20, 20, 0.8)'
-        },
-    ]
-    // useEffect(() => {
-    //     set(ref(db, 'users/' + uid), {
-    //         speed: value
-    //     });
-    // }, [value])
     const onThrottleHandler = (e) => {
-        set(ref(db, 'users/' + uid), {
-            speed: e
-        });
-        // console.log("{'speed': " + e + "} " + date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + "." + date.getMilliseconds())
-        setValue(e)
+        console.log(e)
+        setAngles({
+            startAngle: 300,
+            angleLength: e.angleLength
+        })
     }
 
-    if (!fontsLoaded) {
-        return (<AppLoading />)
-    } else {
-        if (Platform.OS === "ios") {
-            return (
-                <View>
-                    <Backdrop />
-                    <View style={styles.container}>
-                        <View style={styles.speedometer}>
-                            <RNSpeedometer
-                                value={value}
-                                minValue={0}
-                                maxValue={20}
-                                allowedDecimals={3}
-                                easeDuration={0}
-                                size={phoneWidth - 125}
-                                labels={labels}
-                                labelStyle={{ display: 'none' }}
-                            />
-                        </View>
-                        <View style={styles.odometerView}>
-                            <Text style={styles.odometry}>{value < 0 ? "0.00" : value.toFixed(2)} mph</Text>
-                            <Text style={{ color: 'white', textAlign: 'center', fontFamily: 'Avenir-Book' }}>Odometer</Text>
-                            <Text style={{ right: 2, color: 'white', textAlign: 'center', fontFamily: 'Avenir-Book' }}>TRIP: 0.00 mi</Text>
-                        </View>
-                        <View style={styles.slider}>
-                            <MultiSlider
-                                containerStyle={styles.slider}
-                                trackStyle={phoneHeight > 670 ? { height: 150, } : { height: 120 }}
-                                markerStyle={
-                                    phoneHeight > 670
-                                        ? { backgroundColor: 'white', shadowOpacity: 0, height: 150, width: 50, top: 75, borderRadius: 5 }
-                                        : { backgroundColor: 'white', shadowOpacity: 0, height: 120, width: 50, top: 60, borderRadius: 5 }
-                                }
-                                sliderLength={300}
-                                selectedStyle={{ backgroundColor: 'rgba(256,256,256,0.55)', borderTopLeftRadius: 10, borderBottomLeftRadius: 10 }}
-                                unselectedStyle={{
-                                    backgroundColor: 'rgba(256,256,256,0.25)',
-                                    borderTopRightRadius: 10,
-                                    borderBottomRightRadius: 10
-                                }}
-                                min={-5}
-                                max={maxSpeed + 0.125}
-                                values={[value]}
-                                step={0.125}
-                                onValuesChange={values => { onThrottleHandler(values[0]) }}
-                                onValuesChangeFinish={() => setValue(0)}
-                                vertical={true}
-                            />
-                        </View>
-                        <View style={styles.modes}>
-                            <CustomButtons title={`CRUISE\n0 - 5 mph`} type="small" name="cruise" onPress={() => changeModeHandler(5)} />
-                            <CustomButtons title={`FAST\n0 - 12 mph`} type="small" name="fast" onPress={() => changeModeHandler(12)} />
-                            <CustomButtons title={`LUDICROUS\n0 - ⚡️ mph`} type="small" name="ludicrous" onPress={() => changeModeHandler(20)} />
-                        </View>
-                        <View>
-                            <Text style={{ fontFamily: 'Avenir-Book', color: 'white', fontSize: 18, position: "absolute", top: 405, left: -25 }}>Mode</Text>
-                        </View>
-                    </View>
-                </View>
-            );
-        } else if (Platform.OS === "android") {
-            return (
-                <View>
-                    <Backdrop />
-                    <View style={styles.container}>
-                        <View style={android.speedometer}>
-                            <RNSpeedometer
-                                value={value}
-                                minValue={0}
-                                maxValue={20}
-                                allowedDecimals={3}
-                                easeDuration={0}
-                                size={phoneWidth - 125}
-                                labels={labels}
-                                labelStyle={{ display: 'none' }}
-                            />
-                        </View>
-                        <View style={android.odometerView}>
-                            <Text style={styles.odometry}>{value < 0 ? "0.00" : value.toFixed(2)} mph</Text>
-                            <Text style={{ color: 'white', textAlign: 'center', fontFamily: 'Avenir-Book' }}>Odometer</Text>
-                            <Text style={{ right: 2, color: 'white', textAlign: 'center', fontFamily: 'Avenir-Book' }}>TRIP: 0.00 mi</Text>
-                        </View>
-                        <View style={android.slider}>
-                            <MultiSlider
-                                containerStyle={android.slider}
-                                trackStyle={{ height: 150 }}
-                                markerStyle={{ height: 150, top: 24, width: 50, borderRadius: 5, backgroundColor: 'white' }}
-                                pressedMarkerStyle={{ elevation: 3, height: 150, top: 24, width: 50, borderRadius: 5, backgroundColor: 'white' }}
-                                markerContainerStyle={{ height: 150 }}
-                                selectedStyle={{ backgroundColor: 'rgba(256,256,256,0.55)', borderTopLeftRadius: 10, borderBottomLeftRadius: 10 }}
-                                unselectedStyle={{
-                                    backgroundColor: 'rgba(256,256,256,0.25)',
-                                    borderTopRightRadius: 10,
-                                    borderBottomRightRadius: 10
-                                }}
-                                vertical={true}
-                                min={-5}
-                                max={maxSpeed + 0.125}
-                                values={[value]}
-                                step={0.125}
-                                onValuesChange={values => { onThrottleHandler(values[0]) }}
-                                onValuesChangeFinish={() => setValue(0)}
-                            />
-                        </View>
-                        <View style={android.modes}>
-                            <CustomButtons title={`CRUISE\n0 - 5 mph`} type="small" name="cruise" onPress={() => changeModeHandler(5)} />
-                            <CustomButtons title={`FAST\n0 - 12 mph`} type="small" name="fast" onPress={() => changeModeHandler(12)} />
-                            <CustomButtons title={`LUDICROUS\n0 - ⚡️ mph`} type="small" name="ludicrous" onPress={() => changeModeHandler(20)} />
-                        </View>
-                        <View>
-                            <Text style={{ fontFamily: 'Avenir-Book', color: 'white', fontSize: 18, position: "absolute", top: phoneHeight > 680 ? 405 : 305, left: -25 }}>Mode</Text>
-                        </View>
-                    </View>
-                </View>
-            );
+    let fuelAngles = []
+    for (let i = 3; i <= 72; i += 1) {
+        fuelAngles.push(i)
+    }
+
+    let offsetRight = -40
+    let startingX = phoneWidth - offsetRight
+    let startingY = 300
+    let rx = 300
+    let ry = 300
+    let xEnd = phoneWidth - rx - offsetRight
+    let yEnd = 300 + ry
+    let trackStrokeWidth = 80
+
+    let outerOffsets = -85
+    let outerRadius = rx - outerOffsets
+    let outerCuircumferenceStart = startingX - rx + outerOffsets
+
+    let innerOffsets = 150
+    let innerRadius = rx - innerOffsets
+    let innerCuircumferenceStart = startingX - rx + innerOffsets
+    { /*
+        Max angle: 80.4, Offset by 10
+        For 0-5: Increments of 70.4/5 = 14.08
+        For 0-12: Increments of 70.4/12 = 5.86
+        For 0-20: Increments of 70.4/20 = 3.52
+    */}
+    let cruiseInnerAngles = [24.08, 38.16, 52.24, 66.32, 80.4]
+    let fastInnerAngles = [15.89, 21.72, 27.58, 33.44, 39.30, 45.16, 51.02, 56.88, 62.74, 68.6, 74.46, 80.32]
+    let insaneInnerAngles = [17.04, 24.08, 31.12, 38.16, 45.2, 52.24, 59.28, 66.32, 73.36, 80.4]
+    let cruiseNums = [1, 2, 3, 4, 5]
+    let fastNums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    let insaneNums = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
+    const translateX = useSharedValue(0)
+    const translateY = useSharedValue(0)
+    const theta = useSharedValue(0)
+    const [innerAngles, setInnerAngles] = useState(cruiseInnerAngles)
+    const [nums, setNums] = useState(cruiseNums)
+
+    const speedHandler = (angle) => {
+        if (angle * 180 / Math.PI < 10) {
+            angle = 0
+        }
+        const percentage = ((angle * 180 / Math.PI) - 10) / 70.4
+        let maxSpeed = 5
+        if (mode === "cruise") {
+            maxSpeed = 5
+        } else if (mode === "fast") {
+            maxSpeed = 12
+        } else {
+            maxSpeed = 20
+        }
+        if (percentage * (maxSpeed) > 0) {
+            setSpeed(percentage * (maxSpeed))
+        } else {
+            setSpeed(0)
         }
     }
+
+    const panGestureEvent = useAnimatedGestureHandler({
+        onStart: (event, context) => {
+            context.translateX = translateX.value
+            context.translateY = translateY.value
+        },
+        onActive: (event, context) => {
+            theta.value = Math.atan((-event.translationY - context.translateY) / (rx - event.translationX - context.translateX))
+            if (theta.value * 180 / Math.PI < 0 && translateY.value <= 0) {
+                theta.value = 0
+            }
+            if (translateX.value >= 300 && theta.value * 180 / Math.PI > 88) {
+                theta.value = 88 * Math.PI / 180
+            }
+            if (translateX.value < 0) {
+                translateX.value = 0;
+            } else if (event.translationX + context.translateX > rx) {
+                translateX.value = rx;
+            } else {
+                if ((rx - (rx * Math.cos(theta.value))) < rx) {
+                    translateX.value = rx - (rx * Math.cos(theta.value))
+                } else {
+                    translateX.value = rx;
+                }
+            }
+            if ((-(rx * Math.sin(theta.value))) < 0) {
+                if (translateX.value >= rx) {
+                    translateY.value = -rx
+                } else if ((-(rx * Math.sin(theta.value))) < -rx) {
+                    translateY.value = -rx
+                } else {
+                    translateY.value = -(rx * Math.sin(theta.value));
+                }
+            }
+            runOnJS(speedHandler)(theta.value)
+        },
+        onEnd: (event) => {
+            translateX.value = rx - (rx * Math.cos(10 * Math.PI / 180))
+            translateY.value = -(rx * Math.sin(10 * Math.PI / 180));
+            runOnJS(setSpeed)(0)
+        },
+    })
+
+    const rStyle = useAnimatedStyle(() => {
+        return {
+            transform: [
+                {
+                    translateX: translateX.value,
+                },
+                {
+                    translateY: translateY.value
+                },
+            ]
+        }
+    })
+
+    const modeChangeHandler = () => {
+        if (mode === "cruise") {
+            setMode("fast")
+            setInnerAngles(fastInnerAngles)
+            setNums(fastNums)
+        }
+        if (mode === "fast") {
+            setMode("insane")
+            setInnerAngles(insaneInnerAngles)
+            setNums(insaneNums)
+        }
+        if (mode === "insane") {
+            setMode("cruise")
+            setInnerAngles(cruiseInnerAngles)
+            setNums(cruiseNums)
+        }
+    }
+
+    return (
+        <View>
+            <Backdrop />
+            <Text
+                style={{
+                    color: 'white',
+                    fontFamily: 'Avenir-Book',
+                    fontSize: 15,
+                    position: 'absolute',
+                    left: 30,
+                    top: phoneWidth <= 375 || phoneHeight === 736 ? 240 : 260
+                }}
+            >
+                TRIP: <Text style={{ fontSize: 25 }}>03.14</Text> mi
+            </Text>
+            <Text style={{
+                color: 'white',
+                fontSize: 80,
+                position: 'absolute',
+                top: phoneWidth <= 375 || phoneHeight === 736 ? 150 : 170,
+                textAlign: 'center',
+                left: 25,
+                fontFamily: 'Avenir-Book'
+            }}>{speed.toFixed(2).length === 4 ? `0${speed.toFixed(2)}` : speed.toFixed(2)}<Text style={{ fontSize: 30 }}> mph</Text>
+            </Text>
+            <Text
+                style={{
+                    fontSize: 15,
+                    color: 'white',
+                    position: 'absolute',
+                    top: phoneWidth <= 375 ? 315 : 335,
+                    textAlign: 'center',
+                    left: phoneWidth <= 375 ? 15 : phoneWidth <= 390 || phoneWidth <= 414 ? 18 : 57,
+                    fontFamily: 'Avenir-Book',
+                    opacity: 0.6
+                }}
+            >Tap to change</Text>
+
+            <SafeAreaView style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                position: 'absolute',
+            }}>
+                <Svg height={phoneHeight} width={phoneWidth}>
+                    <Defs>
+                        <RadialGradient
+                            id="strokePath"
+                            cx={xEnd}
+                            cy={yEnd}
+                            rx={rx}
+                            ry={rx}
+                            gradientUnits="userSpaceOnUse"
+                        >
+                            <Stop offset="0" stopColor="white" stopOpacity="1" />
+                            <Stop offset="1" stopColor="white" stopOpacity="0.3" />
+                        </RadialGradient>
+                        <RadialGradient
+                            id="speedometerPath"
+                            cx={xEnd}
+                            cy={yEnd}
+                            rx={rx - outerOffsets}
+                            ry={rx - outerOffsets}
+                            gradientUnits="userSpaceOnUse"
+                        >
+                            <Stop offset="0" stopColor="green" stopOpacity="1" />
+                            <Stop offset="1" stopColor="red" stopOpacity="0.3" />
+                        </RadialGradient>
+                    </Defs>
+                    <Path d={`M ${startingX} ${startingY}
+                         A ${rx} ${ry} 0 0 0 ${xEnd} ${yEnd}
+                        `}
+                        stroke="url(#strokePath)" fill="none" strokeWidth={trackStrokeWidth} />
+                    <Path d={`M ${startingX} ${startingY + outerOffsets}
+                         A ${rx - outerOffsets} ${ry - outerOffsets} 0 0 0 ${xEnd + outerOffsets} ${yEnd + 35}
+                        `}
+                        stroke="white"
+                        fill="none"
+                        strokeWidth={2}
+                        id="outerLinePath"
+                    />
+                    <Path d={`M ${startingX} ${startingY + innerOffsets}
+                         A ${rx - innerOffsets} ${ry - innerOffsets} 0 0 0 ${xEnd + innerOffsets} ${yEnd}
+                        `}
+                        stroke="white"
+                        fill="none"
+                        strokeWidth={2}
+                        id="innerLinePath"
+                    />
+                    <SvgText
+                        x={outerCuircumferenceStart + ((outerRadius) - ((outerRadius - 10) * Math.cos(80.5 * Math.PI / 180))) + 3}
+                        y={yEnd - (outerRadius - 10) * Math.sin(80.4 * Math.PI / 180) + 210}
+                        fill="white"
+                        fontSize="20"
+                        key="F"
+                    >
+                        F
+                    </SvgText>
+                    <SvgText
+                        x={innerCuircumferenceStart - 25}
+                        y={yEnd - 8}
+                        fill="white"
+                        fontSize="20"
+                        key="E"
+                    >
+                        E
+                    </SvgText>
+                    <SvgText fill="white" fontSize="15" >
+                        <TextPath href="#outerLinePath" startOffset="89%">
+                            <TSpan dy="-10"> B R A K E</TSpan>
+                        </TextPath>
+                    </SvgText>
+                    {
+                        fuelAngles.map((angle, index) => {
+                            return <Line
+                                x1={innerCuircumferenceStart + (innerRadius - (innerRadius * Math.cos(angle * Math.PI / 180)))}
+                                y1={yEnd - innerRadius * Math.sin(angle * Math.PI / 180)}
+                                x2={innerCuircumferenceStart + ((innerRadius) - ((innerRadius - 10) * Math.cos(angle * Math.PI / 180)))}
+                                y2={yEnd - (innerRadius - 10) * Math.sin(angle * Math.PI / 180)}
+                                stroke="white"
+                                strokeWidth="2"
+                                key={index + 9009}
+                                strokeOpacity={index > fuelAngles.length / 4 ? 0.3 : 1}
+                            />
+                        })
+                    }
+                    <Line
+                        x1={innerCuircumferenceStart + (innerRadius - (innerRadius * Math.cos(40 * Math.PI / 180)))}
+                        y1={yEnd - innerRadius * Math.sin(40 * Math.PI / 180)}
+                        x2={innerCuircumferenceStart + ((innerRadius) - ((innerRadius + 10) * Math.cos(40 * Math.PI / 180)))}
+                        y2={yEnd - (innerRadius + 10) * Math.sin(40 * Math.PI / 180)}
+                        stroke="white"
+                        strokeWidth="2"
+                        key={2 + 90090}
+                    />
+                    <SvgText
+                        x={innerCuircumferenceStart + 30}
+                        y={yEnd - 10}
+                        fill="white"
+                        fontSize="35"
+                        fontStyle="italic"
+                        key="fuelCapacity"
+                    >
+                        24<SvgText
+                            x={innerCuircumferenceStart + 75}
+                            y={yEnd - 10}
+                            fill="white"
+                            fontSize="20"
+                            fontStyle="italic"
+                            key="fuelCapacity"
+                        >%</SvgText>
+                    </SvgText>
+
+                    { /* Bottom semi circle */}
+                    <Path
+                        d={`M ${(xEnd) - trackStrokeWidth / 2} 
+                        ${yEnd} a1,1 0 0,0 ${trackStrokeWidth},0`} fill="url(#strokePath)" />
+                    <Line
+                        x1={outerCuircumferenceStart + (outerRadius - (outerRadius * Math.cos(10 * Math.PI / 180)))}
+                        y1={yEnd - outerRadius * Math.sin(10 * Math.PI / 180)}
+                        x2={outerCuircumferenceStart + ((outerRadius) - ((outerRadius - 10) * Math.cos(10 * Math.PI / 180)))}
+                        y2={yEnd - (outerRadius - 10) * Math.sin(10 * Math.PI / 180)}
+                        stroke="white"
+                        strokeWidth="2"
+                        key={0}
+                    />
+                    <SvgText
+                        x={outerCuircumferenceStart + ((outerRadius) - ((outerRadius - 10) * Math.cos(10 * Math.PI / 180))) + 3}
+                        y={yEnd - (outerRadius - 10) * Math.sin(10 * Math.PI / 180) + 15}
+                        fill="white"
+                        fontSize="15"
+                        key={`${0}${10}`}
+                    >
+                        {0}
+                    </SvgText>
+
+                    {
+                        innerAngles.map((angle, index) => {
+                            return <G key={`${index + 2}${angle}`}>
+                                <Line
+                                    x1={outerCuircumferenceStart + (outerRadius - (outerRadius * Math.cos(angle * Math.PI / 180)))}
+                                    y1={yEnd - outerRadius * Math.sin(angle * Math.PI / 180)}
+                                    x2={outerCuircumferenceStart + ((outerRadius) - ((outerRadius - 10) * Math.cos(angle * Math.PI / 180)))}
+                                    y2={yEnd - (outerRadius - 10) * Math.sin(angle * Math.PI / 180)}
+                                    stroke="white"
+                                    strokeWidth="2"
+                                    key={index}
+                                />
+                                <SvgText
+                                    x={outerCuircumferenceStart + ((outerRadius) - ((outerRadius - 10) * Math.cos(angle * Math.PI / 180))) + 3}
+                                    y={yEnd - (outerRadius - 10) * Math.sin(angle * Math.PI / 180) + 15}
+                                    fill="white"
+                                    fontSize="15"
+                                    key={`${index + 1}${angle}`}
+                                >
+                                    {nums[index]}
+                                </SvgText>
+                            </G>
+                        })
+                    }
+                </Svg>
+
+                { /* Track Ball*/}
+                <PanGestureHandler
+                    onGestureEvent={panGestureEvent}
+                >
+                    <Animated.View
+                        style={[{
+                            position: 'absolute',
+                            top: phoneHeight === 736 ? yEnd - 20 : phoneWidth <= 375 ? yEnd - 20 : yEnd + 7,
+                            left: xEnd - trackStrokeWidth / 2,
+                            height: trackStrokeWidth,
+                            width: trackStrokeWidth,
+                            borderRadius: 50,
+                            backgroundColor: 'rgba(10,47,78,0.5)',
+                            zIndex: 2,
+                            borderColor: 'white',
+                            borderWidth: 1
+                        }, rStyle]
+                        }
+                    >
+                    </Animated.View>
+
+                </PanGestureHandler>
+                { /* Brake Cutoff */}
+                <View style={{
+                    height: 10,
+                    width: 81,
+                    backgroundColor: 'black',
+                    opacity: 0.5,
+                    position: 'absolute',
+                    top: phoneWidth <= 375 || phoneHeight === 736 ? startingY + rx - 35 : startingY + rx - 10,
+                    left: xEnd + offsetRight + 4,
+                    borderRadius: 0,
+                    transform: [
+                        {
+                            rotate: 10 * Math.PI / 180
+                        }
+                    ]
+                }}>
+                </View>
+                <TouchableOpacity
+                    style={{
+                        borderRadius: 50,
+                        height: phoneWidth <= 375 ? 70 : 80,
+                        width: phoneWidth <= 375 ? 70 : 80,
+                        backgroundColor: mode === "cruise" ? 'rgba(0,255,0,0.3)' : mode === "fast" ? 'rgba(255,0,0,0.2)' : mode === "insane" ? 'rgba(255,0,0,0.5)' : 'rgba(0,255,0,0.3)',
+                        position: 'absolute',
+                        left: phoneWidth <= 390 || phoneWidth <= 414 ? 25 : 65,
+                        top: phoneWidth <= 375 ? startingY + 40 : startingY + 60,
+                        flex: 1,
+                        justifyContent: 'center',
+                        borderColor: 'white',
+                        borderWidth: 3
+                    }}
+                    onPress={modeChangeHandler}
+                >
+                    <Text
+                        style={{
+                            color: 'white',
+                            textAlign: 'center',
+                            fontFamily: 'Avenir-Book'
+                        }}
+                    >
+                        {mode === "cruise" ? "CRUISE" : mode === "fast" ? "FAST" : mode === "insane" ? "INSANE" : ""}
+                    </Text>
+                </TouchableOpacity>
+            </SafeAreaView>
+            { /* Juice */}
+            <Image source={require('../assets/juice.png')}
+                style={{
+                    position: 'absolute',
+                    top: phoneHeight <= 736 ? yEnd - 100 : yEnd - 75,
+                    right: 80,
+                    height: 20,
+                    width: 20
+                }}
+            />
+
+        </View >
+    );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        position: 'absolute',
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    speedometer: {
-        width: phoneWidth,
-        top: phoneHeight > 670 ? 100 : 45
-    },
-    odometerView: {
-        top: phoneHeight > 670 ? 100 : 45
-    },
-    odometry: {
-        color: 'white',
-        fontFamily: 'Avenir-Book',
-        fontSize: 33,
-    },
-    slider: {
-        flex: 1,
-        top: phoneHeight > 670 ? 130 : 90,
-        alignContent: 'center',
-        justifyContent: 'center'
-    },
-    modes: {
-        flex: 1,
-        flexDirection: 'row',
-        top: phoneHeight > 670 ? 720 : 590,
-        justifyContent: "space-between",
-        width: phoneWidth * 0.9,
-        position: "absolute",
-        left: -20
-    }
-});
 
-const android = StyleSheet.create({
-    speedometer: {
-        width: phoneWidth,
-        position: "relative",
-        top: phoneHeight > 680 ? 100 : 40,
-    },
-    slider: {
-        flex: 1,
-        top: phoneHeight > 680 ? 130 : 90,
-        alignContent: 'center',
-        justifyContent: 'center',
-    },
-    odometerView: {
-        top: phoneHeight > 680 ? 100 : 45
-    },
-    modes: {
-        flex: 1,
-        flexDirection: 'row',
-        top: phoneHeight > 680 ? 720 : 590,
-        justifyContent: "space-between",
-        width: phoneWidth * 0.9,
-        position: "absolute",
-        left: -20
-    }
-});
+})
