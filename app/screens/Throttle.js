@@ -43,6 +43,7 @@ export default function Throttle() {
     let ry = 300
     let xEnd = phoneWidth - rx - offsetRight
     let yEnd = 300 + ry
+    let trackStrokeWidth = 80
 
     let outerOffsets = -85
     let outerRadius = rx - outerOffsets
@@ -172,7 +173,7 @@ export default function Throttle() {
                     fontSize: 15,
                     position: 'absolute',
                     left: 30,
-                    top: 260
+                    top: phoneWidth <= 375 || phoneHeight === 736 ? 240 : 260
                 }}
             >
                 TRIP: <Text style={{ fontSize: 25 }}>03.14</Text> mi
@@ -181,7 +182,7 @@ export default function Throttle() {
                 color: 'white',
                 fontSize: 80,
                 position: 'absolute',
-                top: 170,
+                top: phoneWidth <= 375 || phoneHeight === 736 ? 150 : 170,
                 textAlign: 'center',
                 left: 25,
                 fontFamily: 'Avenir-Book'
@@ -192,10 +193,11 @@ export default function Throttle() {
                     fontSize: 15,
                     color: 'white',
                     position: 'absolute',
-                    top: 335,
+                    top: phoneWidth <= 375 ? 315 : 335,
                     textAlign: 'center',
-                    left: 22,
-                    fontFamily: 'Avenir-Book'
+                    left: phoneWidth <= 375 ? 15 : phoneWidth <= 390 || phoneWidth <= 414 ? 18 : 57,
+                    fontFamily: 'Avenir-Book',
+                    opacity: 0.6
                 }}
             >Tap to change</Text>
 
@@ -233,7 +235,7 @@ export default function Throttle() {
                     <Path d={`M ${startingX} ${startingY}
                          A ${rx} ${ry} 0 0 0 ${xEnd} ${yEnd}
                         `}
-                        stroke="url(#strokePath)" fill="none" strokeWidth={80} />
+                        stroke="url(#strokePath)" fill="none" strokeWidth={trackStrokeWidth} />
                     <Path d={`M ${startingX} ${startingY + outerOffsets}
                          A ${rx - outerOffsets} ${ry - outerOffsets} 0 0 0 ${xEnd + outerOffsets} ${yEnd + 35}
                         `}
@@ -304,7 +306,7 @@ export default function Throttle() {
                         fontStyle="italic"
                         key="fuelCapacity"
                     >
-                        26<SvgText
+                        24<SvgText
                             x={innerCuircumferenceStart + 75}
                             y={yEnd - 10}
                             fill="white"
@@ -313,7 +315,11 @@ export default function Throttle() {
                             key="fuelCapacity"
                         >%</SvgText>
                     </SvgText>
-                    <Path d={`M ${(xEnd / 2) - (offsetRight / 2) + 5} ${yEnd} a1,1 0 0,0 80,0`} fill="url(#strokePath)" />
+
+                    { /* Bottom semi circle */}
+                    <Path
+                        d={`M ${(xEnd) - trackStrokeWidth / 2} 
+                        ${yEnd} a1,1 0 0,0 ${trackStrokeWidth},0`} fill="url(#strokePath)" />
                     <Line
                         x1={outerCuircumferenceStart + (outerRadius - (outerRadius * Math.cos(10 * Math.PI / 180)))}
                         y1={yEnd - outerRadius * Math.sin(10 * Math.PI / 180)}
@@ -358,16 +364,18 @@ export default function Throttle() {
                         })
                     }
                 </Svg>
+
+                { /* Track Ball*/}
                 <PanGestureHandler
                     onGestureEvent={panGestureEvent}
                 >
                     <Animated.View
                         style={[{
                             position: 'absolute',
-                            top: yEnd + 7,
-                            left: xEnd - 40,
-                            height: 80,
-                            width: 80,
+                            top: phoneHeight === 736 ? yEnd - 20 : phoneWidth <= 375 ? yEnd - 20 : yEnd + 7,
+                            left: xEnd - trackStrokeWidth / 2,
+                            height: trackStrokeWidth,
+                            width: trackStrokeWidth,
                             borderRadius: 50,
                             backgroundColor: 'rgba(10,47,78,0.5)',
                             zIndex: 2,
@@ -379,13 +387,14 @@ export default function Throttle() {
                     </Animated.View>
 
                 </PanGestureHandler>
+                { /* Brake Cutoff */}
                 <View style={{
                     height: 10,
                     width: 81,
                     backgroundColor: 'black',
                     opacity: 0.5,
                     position: 'absolute',
-                    top: startingY + rx - 10,
+                    top: phoneWidth <= 375 || phoneHeight === 736 ? startingY + rx - 35 : startingY + rx - 10,
                     left: xEnd + offsetRight + 4,
                     borderRadius: 0,
                     transform: [
@@ -398,12 +407,12 @@ export default function Throttle() {
                 <TouchableOpacity
                     style={{
                         borderRadius: 50,
-                        height: 80,
-                        width: 80,
+                        height: phoneWidth <= 375 ? 70 : 80,
+                        width: phoneWidth <= 375 ? 70 : 80,
                         backgroundColor: mode === "cruise" ? 'rgba(0,255,0,0.3)' : mode === "fast" ? 'rgba(255,0,0,0.2)' : mode === "insane" ? 'rgba(255,0,0,0.5)' : 'rgba(0,255,0,0.3)',
                         position: 'absolute',
-                        left: 25,
-                        top: startingY + 60,
+                        left: phoneWidth <= 390 || phoneWidth <= 414 ? 25 : 65,
+                        top: phoneWidth <= 375 ? startingY + 40 : startingY + 60,
                         flex: 1,
                         justifyContent: 'center',
                         borderColor: 'white',
@@ -422,10 +431,11 @@ export default function Throttle() {
                     </Text>
                 </TouchableOpacity>
             </SafeAreaView>
+            { /* Juice */}
             <Image source={require('../assets/juice.png')}
                 style={{
                     position: 'absolute',
-                    top: yEnd - 75,
+                    top: phoneHeight <= 736 ? yEnd - 100 : yEnd - 75,
                     right: 80,
                     height: 20,
                     width: 20

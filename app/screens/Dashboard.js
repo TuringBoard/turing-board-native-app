@@ -102,7 +102,7 @@ export default function Dashboard(props) {
                                     </CustomButtons>
                                 </View>
                                 <View style={styles.row}>
-                                    <CustomButtons title="FOLLOW" type="big" onPress={() => navigation.navigate('Test')}>
+                                    <CustomButtons title="FOLLOW" type="big" onPress={onWarningHandler}>
                                         <Image source={require('../assets/duck.png')} style={styles.pic} />
                                     </CustomButtons>
                                     <CustomButtons title="RIDE" type="big" onPress={() => navigation.navigate('Throttle')}>
@@ -196,8 +196,8 @@ const styles = StyleSheet.create({
     pic: {
         width: 55,
         height: 55,
-        top: 45,
-        left: 25
+        top: phoneHeight > 680 ? 45 : 40,
+        left: phoneHeight > 680 ? 30 : 20
     },
     skatePic: {
         width: 85,
