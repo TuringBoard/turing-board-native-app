@@ -28,7 +28,7 @@ export default function Dashboard(props) {
     });
 
     let [fontsLoaded] = useFonts({
-        'Avenir-Book': require('../assets/fonts/AvenirBook.otf')
+        'Avenir-Book': require('../assets/fonts/AvenirBook.otf'),
     });
     const onWarningHandler = () => {
         alert('This feature is currently under construction.');
@@ -135,7 +135,7 @@ export default function Dashboard(props) {
                                     </CustomButtons>
                                 </View>
                                 <View style={styles.row}>
-                                    <CustomButtons title="FOLLOW" type="big" onPress={() => navigation.navigate('Test')}>
+                                    <CustomButtons title="FOLLOW" type="big" onPress={onWarningHandler}>
                                         <Image source={require('../assets/duck.png')} style={android.pic} />
                                     </CustomButtons>
                                     <CustomButtons title="RIDE" type="big" onPress={() => navigation.navigate('Throttle')}>
