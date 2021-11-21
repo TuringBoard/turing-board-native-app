@@ -1,19 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { Dimensions, StyleSheet, View, Text, SafeAreaView, TouchableOpacity, Image } from 'react-native';
+import { Dimensions, StyleSheet, View, Text, SafeAreaView, TouchableOpacity, Image, Platform } from 'react-native';
 import Backdrop from './backdrops/Backdrop';
 import CircularSlider from 'react-native-circular-slider';
 import { useFonts } from 'expo-font';
 import Svg, { Line, Text as SvgText, TextPath, Circle, G, Defs, RadialGradient, Path, Stop, TSpan } from 'react-native-svg';
 import { PanGestureHandler, PanGestureHandlerEvent } from 'react-native-gesture-handler';
 import Animated, { useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, runOnJS, max } from 'react-native-reanimated';
+import { getDatabase, ref, set } from 'firebase/database';
+import { useAuth } from "../store/auth-context";
 
 let phoneWidth = Dimensions.get('window').width;
 let phoneHeight = Dimensions.get('window').height;
+const db = getDatabase();
 
 export default function Throttle() {
     const [sliderVal, setSliderVal] = useState(90)
     const [speed, setSpeed] = useState(0)
     const [mode, setMode] = useState("cruise")
+    const { uid } = useAuth();
     const [angles, setAngles] = useState({
         startAngle: 300,
         angleLength: 1
@@ -22,14 +26,6 @@ export default function Throttle() {
     let [fontsLoaded] = useFonts({
         'Avenir-Book': require('../assets/fonts/AvenirBook.otf'),
     });
-
-    const onThrottleHandler = (e) => {
-        console.log(e)
-        setAngles({
-            startAngle: 300,
-            angleLength: e.angleLength
-        })
-    }
 
     let fuelAngles = []
     for (let i = 3; i <= 72; i += 1) {
@@ -85,8 +81,14 @@ export default function Throttle() {
         }
         if (percentage * (maxSpeed) > 0) {
             setSpeed(percentage * (maxSpeed))
+            set(ref(db, 'users/' + uid), {
+                speed: percentage * (maxSpeed),
+            });
         } else {
             setSpeed(0)
+            set(ref(db, 'users/' + uid), {
+                speed: 0
+            });
         }
     }
 
@@ -128,7 +130,7 @@ export default function Throttle() {
         onEnd: (event) => {
             translateX.value = rx - (rx * Math.cos(10 * Math.PI / 180))
             translateY.value = -(rx * Math.sin(10 * Math.PI / 180));
-            runOnJS(setSpeed)(0)
+            runOnJS(speedHandler)(0)
         },
     })
 
@@ -372,7 +374,7 @@ export default function Throttle() {
                     <Animated.View
                         style={[{
                             position: 'absolute',
-                            top: phoneHeight === 736 ? yEnd - 20 : phoneWidth <= 375 ? yEnd - 20 : yEnd + 7,
+                            top: Platform.OS === "ios" ? phoneHeight === 736 ? yEnd - 20 : phoneWidth <= 375 ? yEnd - 20 : yEnd + 7 : yEnd - 40,
                             left: xEnd - trackStrokeWidth / 2,
                             height: trackStrokeWidth,
                             width: trackStrokeWidth,
@@ -394,12 +396,12 @@ export default function Throttle() {
                     backgroundColor: 'black',
                     opacity: 0.5,
                     position: 'absolute',
-                    top: phoneWidth <= 375 || phoneHeight === 736 ? startingY + rx - 35 : startingY + rx - 10,
+                    top: Platform.OS === "ios" ? phoneWidth <= 375 || phoneHeight === 736 ? startingY + rx - 35 : startingY + rx - 10 : startingY + rx - 57,
                     left: xEnd + offsetRight + 4,
                     borderRadius: 0,
                     transform: [
                         {
-                            rotate: 10 * Math.PI / 180
+                            rotate: "0.17453292519943195rad" // 10 * (Math.PI / 180) because Android is stupid 
                         }
                     ]
                 }}>
@@ -435,7 +437,7 @@ export default function Throttle() {
             <Image source={require('../assets/juice.png')}
                 style={{
                     position: 'absolute',
-                    top: phoneHeight <= 736 ? yEnd - 100 : yEnd - 75,
+                    top: Platform.OS === "ios" ? phoneHeight <= 736 ? yEnd - 100 : yEnd - 75 : yEnd - 120,
                     right: 80,
                     height: 20,
                     width: 20
