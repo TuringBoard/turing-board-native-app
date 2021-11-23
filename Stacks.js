@@ -10,10 +10,11 @@ import Settings from './app/screens/Settings';
 import { useAuth } from './app/store/auth-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Test from './app/screens/Test';
+import ThrottleLeft from './app/screens/ThrottleLeft';
 
 export default function Stacks() {
     const Stack = createStackNavigator();
-    const { isLoggedIn, currentUser } = useAuth();
+    const { isLoggedIn, currentUser, dominantHand } = useAuth();
     const [storageLogin, setStorageLogin] = useState();
 
     useEffect(async () => {
@@ -41,7 +42,7 @@ export default function Stacks() {
                     <>
                         <Stack.Screen name="Dashboard" component={Dashboard} />
                         <Stack.Screen name="Test" component={Test} />
-                        <Stack.Screen name="Throttle" component={Throttle} />
+                        <Stack.Screen name="Throttle" component={dominantHand === "left" ? ThrottleLeft : Throttle} />
                         <Stack.Screen name="Settings" component={Settings} />
                     </>
                 }

@@ -5,7 +5,7 @@ import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AuthContext = React.createContext({
-    loginSuccess: false
+    loginSuccess: false,
 })
 const db = getFirestore();
 
@@ -19,6 +19,7 @@ export const AuthContextProvider = ({ children }) => {
     const [signupSuccess, setSignupSuccess] = useState(false);
     const [uid, setUid] = useState("")
     const [isLoggedIn, setIsLoggedIn] = useState();
+    const [dominantHand, setDominantHand] = useState("right")
 
     const signup = (email, password, firstName, lastName) => {
         createUserWithEmailAndPassword(auth, email, password)
@@ -28,7 +29,8 @@ export const AuthContextProvider = ({ children }) => {
                 return setDoc(doc(db, 'users', cred.user.uid), {
                     id: cred.user.uid,
                     firstName,
-                    lastName
+                    lastName,
+                    dominantHand: "right"
                 })
             }).catch(error => {
                 console.log(error)
@@ -71,6 +73,14 @@ export const AuthContextProvider = ({ children }) => {
         });
     }
 
+    const toggleHand = () => {
+        if (dominantHand === "right") {
+            setDominantHand("left")
+        } else {
+            setDominantHand("right")
+        }
+    }
+
     useEffect(async () => {
         auth.onAuthStateChanged(user => {
             user && setCurrentUser(user)
@@ -103,11 +113,12 @@ export const AuthContextProvider = ({ children }) => {
         signup,
         login,
         logout,
+        toggleHand,
+        dominantHand,
         loginSuccess,
         signupSuccess,
         uid,
     }
-
     return (
         <AuthContext.Provider value={value}>
             {children}

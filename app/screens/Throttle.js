@@ -43,11 +43,11 @@ export default function Throttle() {
 
     let outerOffsets = -85
     let outerRadius = rx - outerOffsets
-    let outerCuircumferenceStart = startingX - rx + outerOffsets
+    let outerCircumferenceStart = startingX - rx + outerOffsets
 
     let innerOffsets = 150
     let innerRadius = rx - innerOffsets
-    let innerCuircumferenceStart = startingX - rx + innerOffsets
+    let innerCircumferenceStart = startingX - rx + innerOffsets
     { /*
         Max angle: 80.4, Offset by 10
         For 0-5: Increments of 70.4/5 = 14.08
@@ -102,7 +102,7 @@ export default function Throttle() {
             if (theta.value * 180 / Math.PI < 0 && translateY.value <= 0) {
                 theta.value = 0
             }
-            if (translateX.value >= 300 && theta.value * 180 / Math.PI > 88) {
+            if (translateX.value >= rx && theta.value * 180 / Math.PI > 88) {
                 theta.value = 88 * Math.PI / 180
             }
             if (translateX.value < 0) {
@@ -255,7 +255,7 @@ export default function Throttle() {
                         id="innerLinePath"
                     />
                     <SvgText
-                        x={outerCuircumferenceStart + ((outerRadius) - ((outerRadius - 10) * Math.cos(80.5 * Math.PI / 180))) + 3}
+                        x={outerCircumferenceStart + ((outerRadius) - ((outerRadius - 10) * Math.cos(80.5 * Math.PI / 180))) + 3}
                         y={yEnd - (outerRadius - 10) * Math.sin(80.4 * Math.PI / 180) + 210}
                         fill="white"
                         fontSize="20"
@@ -264,7 +264,7 @@ export default function Throttle() {
                         F
                     </SvgText>
                     <SvgText
-                        x={innerCuircumferenceStart - 25}
+                        x={innerCircumferenceStart - 25}
                         y={yEnd - 8}
                         fill="white"
                         fontSize="20"
@@ -280,9 +280,9 @@ export default function Throttle() {
                     {
                         fuelAngles.map((angle, index) => {
                             return <Line
-                                x1={innerCuircumferenceStart + (innerRadius - (innerRadius * Math.cos(angle * Math.PI / 180)))}
+                                x1={innerCircumferenceStart + (innerRadius - (innerRadius * Math.cos(angle * Math.PI / 180)))}
                                 y1={yEnd - innerRadius * Math.sin(angle * Math.PI / 180)}
-                                x2={innerCuircumferenceStart + ((innerRadius) - ((innerRadius - 10) * Math.cos(angle * Math.PI / 180)))}
+                                x2={innerCircumferenceStart + ((innerRadius) - ((innerRadius - 10) * Math.cos(angle * Math.PI / 180)))}
                                 y2={yEnd - (innerRadius - 10) * Math.sin(angle * Math.PI / 180)}
                                 stroke="white"
                                 strokeWidth="2"
@@ -292,16 +292,16 @@ export default function Throttle() {
                         })
                     }
                     <Line
-                        x1={innerCuircumferenceStart + (innerRadius - (innerRadius * Math.cos(40 * Math.PI / 180)))}
+                        x1={innerCircumferenceStart + (innerRadius - (innerRadius * Math.cos(40 * Math.PI / 180)))}
                         y1={yEnd - innerRadius * Math.sin(40 * Math.PI / 180)}
-                        x2={innerCuircumferenceStart + ((innerRadius) - ((innerRadius + 10) * Math.cos(40 * Math.PI / 180)))}
+                        x2={innerCircumferenceStart + ((innerRadius) - ((innerRadius + 10) * Math.cos(40 * Math.PI / 180)))}
                         y2={yEnd - (innerRadius + 10) * Math.sin(40 * Math.PI / 180)}
                         stroke="white"
                         strokeWidth="2"
                         key={2 + 90090}
                     />
                     <SvgText
-                        x={innerCuircumferenceStart + 30}
+                        x={innerCircumferenceStart + 30}
                         y={yEnd - 10}
                         fill="white"
                         fontSize="35"
@@ -309,7 +309,7 @@ export default function Throttle() {
                         key="fuelCapacity"
                     >
                         24<SvgText
-                            x={innerCuircumferenceStart + 75}
+                            x={innerCircumferenceStart + 75}
                             y={yEnd - 10}
                             fill="white"
                             fontSize="20"
@@ -323,16 +323,16 @@ export default function Throttle() {
                         d={`M ${(xEnd) - trackStrokeWidth / 2} 
                         ${yEnd} a1,1 0 0,0 ${trackStrokeWidth},0`} fill="url(#strokePath)" />
                     <Line
-                        x1={outerCuircumferenceStart + (outerRadius - (outerRadius * Math.cos(10 * Math.PI / 180)))}
+                        x1={outerCircumferenceStart + (outerRadius - (outerRadius * Math.cos(10 * Math.PI / 180)))}
                         y1={yEnd - outerRadius * Math.sin(10 * Math.PI / 180)}
-                        x2={outerCuircumferenceStart + ((outerRadius) - ((outerRadius - 10) * Math.cos(10 * Math.PI / 180)))}
+                        x2={outerCircumferenceStart + ((outerRadius) - ((outerRadius - 10) * Math.cos(10 * Math.PI / 180)))}
                         y2={yEnd - (outerRadius - 10) * Math.sin(10 * Math.PI / 180)}
                         stroke="white"
                         strokeWidth="2"
                         key={0}
                     />
                     <SvgText
-                        x={outerCuircumferenceStart + ((outerRadius) - ((outerRadius - 10) * Math.cos(10 * Math.PI / 180))) + 3}
+                        x={outerCircumferenceStart + ((outerRadius) - ((outerRadius - 10) * Math.cos(10 * Math.PI / 180))) + 3}
                         y={yEnd - (outerRadius - 10) * Math.sin(10 * Math.PI / 180) + 15}
                         fill="white"
                         fontSize="15"
@@ -345,16 +345,16 @@ export default function Throttle() {
                         innerAngles.map((angle, index) => {
                             return <G key={`${index + 2}${angle}`}>
                                 <Line
-                                    x1={outerCuircumferenceStart + (outerRadius - (outerRadius * Math.cos(angle * Math.PI / 180)))}
+                                    x1={outerCircumferenceStart + (outerRadius - (outerRadius * Math.cos(angle * Math.PI / 180)))}
                                     y1={yEnd - outerRadius * Math.sin(angle * Math.PI / 180)}
-                                    x2={outerCuircumferenceStart + ((outerRadius) - ((outerRadius - 10) * Math.cos(angle * Math.PI / 180)))}
+                                    x2={outerCircumferenceStart + ((outerRadius) - ((outerRadius - 10) * Math.cos(angle * Math.PI / 180)))}
                                     y2={yEnd - (outerRadius - 10) * Math.sin(angle * Math.PI / 180)}
                                     stroke="white"
                                     strokeWidth="2"
                                     key={index}
                                 />
                                 <SvgText
-                                    x={outerCuircumferenceStart + ((outerRadius) - ((outerRadius - 10) * Math.cos(angle * Math.PI / 180))) + 3}
+                                    x={outerCircumferenceStart + ((outerRadius) - ((outerRadius - 10) * Math.cos(angle * Math.PI / 180))) + 3}
                                     y={yEnd - (outerRadius - 10) * Math.sin(angle * Math.PI / 180) + 15}
                                     fill="white"
                                     fontSize="15"
