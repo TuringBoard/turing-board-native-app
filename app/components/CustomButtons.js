@@ -141,7 +141,8 @@ const styles = StyleSheet.create({
         borderRightWidth: 1,
         borderLeftColor: 'white',
         borderLeftWidth: 1,
-        left: phoneWidth * 0.10
+        left: phoneWidth * 0.10,
+        marginBottom: 30
     },
     settingsBtnText: {
         color: 'white',
