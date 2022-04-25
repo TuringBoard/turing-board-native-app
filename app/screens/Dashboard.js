@@ -8,14 +8,16 @@ import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
 import { useAuth } from '../store/auth-context';
 import * as Location from 'expo-location';
+import { getDatabase, ref, set } from 'firebase/database';
 
 const db = getFirestore();
-
+const rtdb = getDatabase();
 let phoneWidth = Dimensions.get('window').width;
 let phoneHeight = Dimensions.get('window').height;
 
 export default function Dashboard(props) {
     const { uid } = useAuth()
+
     const [firstName, setFirstName] = useState("Friend");
     const navigation = useNavigation();
     const [location, setLocation] = useState(null);
@@ -31,6 +33,11 @@ export default function Dashboard(props) {
         'Avenir-Book': require('../assets/fonts/AvenirBook.otf'),
     });
     const onWarningHandler = () => {
+        set(ref(rtdb, 'users/' + uid), {
+            speed: 0,
+            mode: 3,
+            autonomous: true
+        });
         alert('This feature is currently under construction.');
     };
 
@@ -102,7 +109,7 @@ export default function Dashboard(props) {
                                     </CustomButtons>
                                 </View>
                                 <View style={styles.row}>
-                                    <CustomButtons title="FOLLOW" type="big" onPress={onWarningHandler}>
+                                    <CustomButtons title="FOLLOW" type="big" onPress={() => navigation.navigate('FollowMe')}>
                                         <Image source={require('../assets/duck.png')} style={styles.pic} />
                                     </CustomButtons>
                                     <CustomButtons title="RIDE" type="big" onPress={() => navigation.navigate('Throttle')}>
@@ -135,7 +142,7 @@ export default function Dashboard(props) {
                                     </CustomButtons>
                                 </View>
                                 <View style={styles.row}>
-                                    <CustomButtons title="FOLLOW" type="big" onPress={onWarningHandler}>
+                                    <CustomButtons title="FOLLOW" type="big" onPress={() => navigation.navigate('FollowMe')}>
                                         <Image source={require('../assets/duck.png')} style={android.pic} />
                                     </CustomButtons>
                                     <CustomButtons title="RIDE" type="big" onPress={() => navigation.navigate('Throttle')}>

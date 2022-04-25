@@ -32,6 +32,22 @@ export default function Throttle() {
         fuelAngles.push(i)
     }
 
+    useEffect(() => {
+        set(ref(db, 'users/' + uid), {
+            mode: 0,
+            speed: 0,
+            autonomous: false
+        });
+
+        return () => {
+            set(ref(db, 'users/' + uid), {
+                mode: 1,
+                speed: 0,
+                autonomous: false
+            });
+        }
+    }, [])
+
     let offsetRight = -40
     let startingX = phoneWidth - offsetRight
     let startingY = 300
@@ -83,11 +99,22 @@ export default function Throttle() {
             setSpeed(percentage * (maxSpeed))
             set(ref(db, 'users/' + uid), {
                 speed: percentage * (maxSpeed),
+                mode: 0,
+                autonomous: false
             });
         } else {
             setSpeed(0)
             set(ref(db, 'users/' + uid), {
-                speed: 0
+                speed: 0,
+                mode: 0,
+                autonomous: false
+            });
+        }
+        return () => {
+            set(ref(db, 'users/' + uid), {
+                mode: 1,
+                speed: 0,
+                autonomous: false
             });
         }
     }

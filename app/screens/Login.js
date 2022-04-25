@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Dimensions, Platform, View, Text, TextInput, Alert } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useFonts } from 'expo-font';
@@ -6,14 +6,12 @@ import AppLoading from 'expo-app-loading';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from '../store/auth-context';
-import { AuthContext } from '../store/auth-context';
 
 
 let phoneWidth = Dimensions.get('window').width;
 let phoneHeight = Dimensions.get('window').height;
 
 export default function Login({ loginMode }) {
-    const [state, setState] = useContext(AuthContext)
     const { login, loginSuccess, isLoggedIn } = useAuth();
     const [loginAttempted, setLoginAttempted] = useState(false);
     const [isError, setIsError] = useState(false)
@@ -57,7 +55,7 @@ export default function Login({ loginMode }) {
     const onSubmitHandler = async () => {
         setLoginAttempted(true)
         try {
-            await state.login(values.email, values.password)
+            await login(values.email, values.password)
         } catch (error) {
             alert(error)
         }

@@ -22,6 +22,23 @@ export default function ThrottleLeft() {
         startAngle: 300,
         angleLength: 1
     })
+
+    useEffect(() => {
+        set(ref(db, 'users/' + uid), {
+            mode: 2,
+            speed: 0,
+            autonomous: false
+        });
+
+        return () => {
+            set(ref(db, 'users/' + uid), {
+                mode: 0,
+                speed: 0,
+                autonomous: false
+            });
+        }
+    }, [])
+
     const [value, setValue] = useState(0)
     let [fontsLoaded] = useFonts({
         'Avenir-Book': require('../assets/fonts/AvenirBook.otf'),
@@ -85,11 +102,22 @@ export default function ThrottleLeft() {
             setSpeed(percentage * (maxSpeed))
             set(ref(db, 'users/' + uid), {
                 speed: percentage * (maxSpeed),
+                mode: 0,
+                autonomous: false
             });
         } else {
             setSpeed(0)
             set(ref(db, 'users/' + uid), {
-                speed: 0
+                speed: 0,
+                mode: 0,
+                autonomous: false
+            });
+        }
+        return () => {
+            set(ref(db, 'users/' + uid), {
+                mode: 1,
+                speed: 0,
+                autonomous: false
             });
         }
     }
